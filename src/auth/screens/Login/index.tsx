@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { LoginData } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/AuthNavigator';
 import { createStyles } from './styles';
@@ -19,6 +20,7 @@ interface LoginScreenProps {
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const { theme } = useThemeStore();
+  const { setAuthStatus } = useUserStore();
   const {
     control,
     handleSubmit,
@@ -30,11 +32,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     },
   });
 
-  const onSubmit = (data: LoginData) => {
+  const onSubmit = async (data: LoginData) => {
     // Mock login logic - will be replaced with actual auth service
     if (data.email === 'demo@test.com' && data.password === 'password') {
-      Alert.alert('Success', 'Login successful!');
-      // Navigate to main app
+      Alert.alert('Success', 'Login successful!', [
+        {
+          text: 'OK',
+          onPress: async () => {
+            await setAuthStatus({isAuthenticated: true});
+          },
+        },
+      ]);
     } else {
       Alert.alert('Error', 'Invalid credentials');
     }

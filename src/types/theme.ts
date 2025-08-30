@@ -11,6 +11,7 @@ export interface ThemeColors {
   error: string;
   success: string;
   warning: string;
+  shadow: string;
 }
 
 export interface Theme {
@@ -31,6 +32,7 @@ export const lightTheme: Theme = {
     error: '#ef4444',
     success: '#10b981',
     warning: '#f59e0b',
+    shadow: '#000000',
   },
 };
 
@@ -47,5 +49,6 @@ export const darkTheme: Theme = {
     error: '#f87171',
     success: '#34d399',
     warning: '#fbbf24',
+    shadow: '#000000',
   },
 };

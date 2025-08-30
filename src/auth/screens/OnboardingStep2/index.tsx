@@ -33,7 +33,7 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   route,
 }) => {
   const {theme} = useThemeStore();
-  const {saveStep2Data} = useUserStore();
+  const {saveStep2Data, setAuthStatus} = useUserStore();
   const {step1Data} = route.params;
   
   const {
@@ -68,9 +68,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
       Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
         {
           text: 'Get Started',
-          onPress: () => {
-            // Navigate to main app (will be implemented)
-            console.log('Navigate to main app');
+          onPress: async () => {
+            // Set authenticated status to navigate to main app
+            await setAuthStatus({isAuthenticated: true});
           },
         },
       ]);
@@ -88,9 +88,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
     Alert.alert('Profile Saved', 'You can add your address later when making your first purchase.', [
       {
         text: 'Continue',
-        onPress: () => {
-          // Navigate to main app (will be implemented)
-          console.log('Navigate to main app with partial profile');
+        onPress: async () => {
+          // Set authenticated status to navigate to main app
+          await setAuthStatus({isAuthenticated: true});
         },
       },
     ]);

@@ -22,7 +22,7 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
   navigation,
 }) => {
   const { theme, setThemeMode } = useThemeStore();
-  const { saveStep1Data } = useUserStore();
+  const { saveStep1Data, setAuthStatus } = useUserStore();
   const {
     control,
     handleSubmit,
@@ -54,11 +54,11 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
     }
   };
 
-  const onSkip = () => {
+  const onSkip = async () => {
     // Skip step 1 - user will be prompted for missing info during purchase
     console.log('Skipping step 1 - will prompt during purchase');
-    // Navigate to main app (will be implemented)
-    // For now, we don't save any data
+    // Set authenticated status to navigate to main app
+    await setAuthStatus({isAuthenticated: true});
   };
 
   const styles = createStyles(theme);

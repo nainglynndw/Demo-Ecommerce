@@ -1,33 +1,30 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useForm, Controller} from 'react-hook-form';
-import {SignupData} from '../../types';
-import {useThemeStore} from '../../../stores/themeStore';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {AuthStackParamList} from '../../../navigation/AuthNavigator';
-import {createStyles} from './styles';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForm, Controller } from 'react-hook-form';
+import { SignupData } from '../../types';
+import { useThemeStore } from '../../../stores/themeStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthStackParamList } from '../../../navigation/AuthNavigator';
+import { createStyles } from './styles';
 
-type SignUpScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignUp'>;
+type SignUpScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'SignUp'
+>;
 
 interface SignUpScreenProps {
   navigation: SignUpScreenNavigationProp;
 }
 
-export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
-  const {theme} = useThemeStore();
+export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
+  const { theme } = useThemeStore();
   const {
     control,
     handleSubmit,
     watch,
-    formState: {errors, isValid},
-  } = useForm<SignupData & {confirmPassword: string}>({
+    formState: { errors, isValid },
+  } = useForm<SignupData & { confirmPassword: string }>({
     defaultValues: {
       email: '',
       password: '',
@@ -37,7 +34,7 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
 
   const password = watch('password');
 
-  const onSubmit = (data: SignupData & {confirmPassword: string}) => {
+  const onSubmit = (_data: SignupData & { confirmPassword: string }) => {
     // Mock signup logic - will be replaced with actual auth service
     Alert.alert('Success', 'Account created successfully!', [
       {
@@ -70,7 +67,7 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
                   message: 'Please enter a valid email',
                 },
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[styles.input, errors.email && styles.inputError]}
                   placeholder="Enter your email"
@@ -100,7 +97,7 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
                   message: 'Password must be at least 6 characters',
                 },
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[styles.input, errors.password && styles.inputError]}
                   placeholder="Enter your password"
@@ -127,7 +124,7 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
                 validate: value =>
                   value === password || 'Passwords do not match',
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[
                     styles.input,
@@ -152,7 +149,8 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
           <TouchableOpacity
             style={[styles.button, !isValid && styles.buttonDisabled]}
             onPress={handleSubmit(onSubmit)}
-            disabled={!isValid}>
+            disabled={!isValid}
+          >
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
 
