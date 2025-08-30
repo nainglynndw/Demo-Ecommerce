@@ -19,10 +19,12 @@ jobs:
           cache: 'yarn'
 
       - name: Enable Corepack
-        run: corepack enable && corepack prepare yarn@3.6.4 --activate
+        run: |
+          corepack enable
+          corepack prepare yarn@3.6.4 --activate
 
       - name: Install JS dependencies
-        run: yarn install --immutable
+        run: corepack yarn install --frozen-lockfile
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
