@@ -12,11 +12,11 @@ interface UserStore {
   needsOnboarding: 'step1' | 'step2' | 'none';
   
   // Actions
-  saveStep1Data: (data: OnboardingStep1Data) => void;
-  saveStep2Data: (data: OnboardingStep2Data) => void;
-  updateUserProfile: (profile: Partial<UserProfile>) => void;
-  setAuthStatus: (status: AuthStatus) => void;
-  logout: () => void;
+  saveStep1Data: (data: OnboardingStep1Data) => Promise<void>;
+  saveStep2Data: (data: OnboardingStep2Data) => Promise<void>;
+  updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
+  setAuthStatus: (status: AuthStatus) => Promise<void>;
+  logout: () => Promise<void>;
   initializeUserData: () => Promise<void>;
   
   // Utility functions
@@ -43,9 +43,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     return 'none';
   },
 
-  saveStep1Data: (data: OnboardingStep1Data) => {
+  saveStep1Data: async (data: OnboardingStep1Data) => {
     try {
-      StorageService.saveStep1Data(data);
+      await StorageService.saveStep1Data(data);
       
       const { userProfile, onboardingStatus } = get();
       const updatedProfile = {
@@ -71,9 +71,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
-  saveStep2Data: (data: OnboardingStep2Data) => {
+  saveStep2Data: async (data: OnboardingStep2Data) => {
     try {
-      StorageService.saveStep2Data(data);
+      await StorageService.saveStep2Data(data);
       
       const { userProfile, onboardingStatus } = get();
       const updatedProfile = {
@@ -98,9 +98,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
-  updateUserProfile: (profile: Partial<UserProfile>) => {
+  updateUserProfile: async (profile: Partial<UserProfile>) => {
     try {
-      StorageService.saveUserProfile(profile);
+      await StorageService.saveUserProfile(profile);
       
       const { userProfile } = get();
       set({ 
@@ -115,9 +115,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
-  setAuthStatus: (status: AuthStatus) => {
+  setAuthStatus: async (status: AuthStatus) => {
     try {
-      StorageService.saveAuthStatus(status);
+      await StorageService.saveAuthStatus(status);
       set({ authStatus: status });
       
     } catch (error) {
@@ -125,9 +125,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
-  logout: () => {
+  logout: async () => {
     try {
-      StorageService.clearUserData();
+      await StorageService.clearUserData();
       
       set({
         userProfile: null,
@@ -150,9 +150,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       set({ isLoading: true });
       
-      const profile = StorageService.getUserProfile();
-      const onboarding = StorageService.getOnboardingStatus();
-      const auth = StorageService.getAuthStatus();
+      const profile = await StorageService.getUserProfile();
+      const onboarding = await StorageService.getOnboardingStatus();
+      const auth = await StorageService.getAuthStatus();
       
       set({
         userProfile: profile,

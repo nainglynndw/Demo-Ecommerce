@@ -40,14 +40,18 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
 
   const selectedTheme = watch('preferences.theme');
 
-  const onSubmit = (data: OnboardingStep1Data) => {
-    // Save step 1 data to storage
-    saveStep1Data(data);
+  const onSubmit = async (data: OnboardingStep1Data) => {
+    try {
+      // Save step 1 data to storage
+      await saveStep1Data(data);
 
-    // Navigate to step 2 with step 1 data
-    navigation.navigate('OnboardingStep2', {
-      step1Data: data,
-    });
+      // Navigate to step 2 with step 1 data
+      navigation.navigate('OnboardingStep2', {
+        step1Data: data,
+      });
+    } catch (error) {
+      console.error('Failed to save step 1 data:', error);
+    }
   };
 
   const onSkip = () => {
@@ -153,9 +157,9 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
                         selectedTheme === option.value &&
                           styles.themeOptionSelected,
                       ]}
-                      onPress={() => {
+                      onPress={async () => {
                         onChange(option.value);
-                        setThemeMode(option.value);
+                        await setThemeMode(option.value);
                       }}
                     >
                       <Text

@@ -9,10 +9,10 @@ interface ThemeStore {
   themeMode: ThemeMode;
   isLoading: boolean;
   systemColorScheme: 'light' | 'dark';
-  setThemeMode: (mode: ThemeMode) => void;
+  setThemeMode: (mode: ThemeMode) => Promise<void>;
   updateSystemColorScheme: (scheme: 'light' | 'dark') => void;
   updateTheme: () => void;
-  initializeTheme: () => void;
+  initializeTheme: () => Promise<void>;
 }
 
 export const useThemeStore = create<ThemeStore>((set, get) => ({
@@ -21,9 +21,9 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   isLoading: true,
   systemColorScheme: Appearance.getColorScheme() || 'light',
 
-  setThemeMode: (mode: ThemeMode) => {
+  setThemeMode: async (mode: ThemeMode) => {
     try {
-      StorageService.saveTheme(mode);
+      await StorageService.saveTheme(mode);
       set({ themeMode: mode });
       
       // Update theme based on new mode
@@ -48,9 +48,9 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     set({ theme: newTheme });
   },
 
-  initializeTheme: () => {
+  initializeTheme: async () => {
     try {
-      const savedTheme = StorageService.getTheme();
+      const savedTheme = await StorageService.getTheme();
       const currentSystemScheme = Appearance.getColorScheme() || 'light';
       
       set({ 

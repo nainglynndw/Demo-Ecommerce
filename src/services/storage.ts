@@ -1,16 +1,10 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   UserProfile,
   OnboardingStep1Data,
   OnboardingStep2Data,
 } from '../auth/types';
 import { ThemeMode } from '../types/theme';
-
-// Initialize MMKV instance
-export const storage = new MMKV({
-  id: 'user-storage',
-  encryptionKey: 'demo-ecommerce-key', // In production, use a proper key
-});
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -36,9 +30,9 @@ export interface AuthStatus {
 // User Profile Storage
 export const userStorage = {
   // Save complete user profile
-  saveUserProfile: (profile: Partial<UserProfile>): void => {
+  saveUserProfile: async (profile: Partial<UserProfile>): Promise<void> => {
     try {
-      const existingProfile = userStorage.getUserProfile();
+      const existingProfile = await userStorage.getUserProfile();
       const updatedProfile = {
         ...existingProfile,
         ...profile,
@@ -53,16 +47,16 @@ export const userStorage = {
             : existingProfile?.onboardingCompleted?.step2 || false,
         },
       };
-      storage.set(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedProfile));
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedProfile));
     } catch (error) {
       console.error('Failed to save user profile:', error);
     }
   },
 
   // Get user profile
-  getUserProfile: (): Partial<UserProfile> | null => {
+  getUserProfile: async (): Promise<Partial<UserProfile> | null> => {
     try {
-      const profileData = storage.getString(STORAGE_KEYS.USER_PROFILE);
+      const profileData = await AsyncStorage.getItem(STORAGE_KEYS.USER_PROFILE);
       return profileData ? JSON.parse(profileData) : null;
     } catch (error) {
       console.error('Failed to get user profile:', error);
@@ -70,15 +64,15 @@ export const userStorage = {
     }
   },
 
-  // Update Oboarding Status
-  updateOnboardingStatus: (status: Partial<OnboardingStatus>): void => {
+  // Update Onboarding Status
+  updateOnboardingStatus: async (status: Partial<OnboardingStatus>): Promise<void> => {
     try {
-      const currentStatus = onboardingStorage.getOnboardingStatus();
+      const currentStatus = await onboardingStorage.getOnboardingStatus();
       const updatedStatus = {
         ...currentStatus,
         ...status,
       };
-      storage.set(
+      await AsyncStorage.setItem(
         STORAGE_KEYS.ONBOARDING_STATUS,
         JSON.stringify(updatedStatus),
       );
@@ -88,15 +82,15 @@ export const userStorage = {
   },
 
   // Save Step 1 data
-  saveStep1Data: (data: OnboardingStep1Data): void => {
+  saveStep1Data: async (data: OnboardingStep1Data): Promise<void> => {
     try {
       const profileUpdate: Partial<UserProfile> = {
         name: data.name,
         phone: data.phone,
         preferences: data.preferences,
       };
-      userStorage.saveUserProfile(profileUpdate);
-      userStorage.updateOnboardingStatus({
+      await userStorage.saveUserProfile(profileUpdate);
+      await userStorage.updateOnboardingStatus({
         step1Completed: true,
         lastCompletedStep: 'step1',
       });
@@ -106,14 +100,14 @@ export const userStorage = {
   },
 
   // Save Step 2 data
-  saveStep2Data: (data: OnboardingStep2Data): void => {
+  saveStep2Data: async (data: OnboardingStep2Data): Promise<void> => {
     try {
       const profileUpdate: Partial<UserProfile> = {
         dateOfBirth: data.dateOfBirth,
         address: data.address,
       };
-      userStorage.saveUserProfile(profileUpdate);
-      userStorage.updateOnboardingStatus({
+      await userStorage.saveUserProfile(profileUpdate);
+      await userStorage.updateOnboardingStatus({
         step2Completed: true,
         lastCompletedStep: 'step2',
       });
@@ -123,11 +117,13 @@ export const userStorage = {
   },
 
   // Clear user data (logout)
-  clearUserData: (): void => {
+  clearUserData: async (): Promise<void> => {
     try {
-      storage.delete(STORAGE_KEYS.USER_PROFILE);
-      storage.delete(STORAGE_KEYS.ONBOARDING_STATUS);
-      storage.delete(STORAGE_KEYS.AUTH_STATUS);
+      await AsyncStorage.multiRemove([
+        STORAGE_KEYS.USER_PROFILE,
+        STORAGE_KEYS.ONBOARDING_STATUS,
+        STORAGE_KEYS.AUTH_STATUS,
+      ]);
     } catch (error) {
       console.error('Failed to clear user data:', error);
     }
@@ -137,9 +133,9 @@ export const userStorage = {
 // Onboarding Status Storage
 export const onboardingStorage = {
   // Get onboarding status
-  getOnboardingStatus: (): OnboardingStatus => {
+  getOnboardingStatus: async (): Promise<OnboardingStatus> => {
     try {
-      const statusData = storage.getString(STORAGE_KEYS.ONBOARDING_STATUS);
+      const statusData = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_STATUS);
       return statusData
         ? JSON.parse(statusData)
         : {
@@ -158,14 +154,14 @@ export const onboardingStorage = {
   },
 
   // Update onboarding status
-  updateOnboardingStatus: (status: Partial<OnboardingStatus>): void => {
+  updateOnboardingStatus: async (status: Partial<OnboardingStatus>): Promise<void> => {
     try {
-      const currentStatus = onboardingStorage.getOnboardingStatus();
+      const currentStatus = await onboardingStorage.getOnboardingStatus();
       const updatedStatus = {
         ...currentStatus,
         ...status,
       };
-      storage.set(
+      await AsyncStorage.setItem(
         STORAGE_KEYS.ONBOARDING_STATUS,
         JSON.stringify(updatedStatus),
       );
@@ -175,8 +171,8 @@ export const onboardingStorage = {
   },
 
   // Check if user needs onboarding
-  needsOnboarding: (): 'step1' | 'step2' | 'none' => {
-    const status = onboardingStorage.getOnboardingStatus();
+  needsOnboarding: async (): Promise<'step1' | 'step2' | 'none'> => {
+    const status = await onboardingStorage.getOnboardingStatus();
     if (!status.step1Completed) return 'step1';
     if (!status.step2Completed) return 'step2';
     return 'none';
@@ -186,21 +182,19 @@ export const onboardingStorage = {
 // Theme Storage
 export const themeStorage = {
   // Save theme preference
-  saveTheme: (theme: ThemeMode): void => {
+  saveTheme: async (theme: ThemeMode): Promise<void> => {
     try {
-      storage.set(STORAGE_KEYS.THEME_PREFERENCE, theme);
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME_PREFERENCE, theme);
     } catch (error) {
       console.error('Failed to save theme:', error);
     }
   },
 
   // Get theme preference
-  getTheme: (): ThemeMode => {
+  getTheme: async (): Promise<ThemeMode> => {
     try {
-      return (
-        (storage.getString(STORAGE_KEYS.THEME_PREFERENCE) as ThemeMode) ||
-        'system'
-      );
+      const theme = await AsyncStorage.getItem(STORAGE_KEYS.THEME_PREFERENCE);
+      return (theme as ThemeMode) || 'system';
     } catch (error) {
       console.error('Failed to get theme:', error);
       return 'system';
@@ -211,18 +205,18 @@ export const themeStorage = {
 // Auth Status Storage (for future login/signup logic)
 export const authStorage = {
   // Save auth status
-  saveAuthStatus: (status: AuthStatus): void => {
+  saveAuthStatus: async (status: AuthStatus): Promise<void> => {
     try {
-      storage.set(STORAGE_KEYS.AUTH_STATUS, JSON.stringify(status));
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTH_STATUS, JSON.stringify(status));
     } catch (error) {
       console.error('Failed to save auth status:', error);
     }
   },
 
   // Get auth status
-  getAuthStatus: (): AuthStatus => {
+  getAuthStatus: async (): Promise<AuthStatus> => {
     try {
-      const statusData = storage.getString(STORAGE_KEYS.AUTH_STATUS);
+      const statusData = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_STATUS);
       return statusData
         ? JSON.parse(statusData)
         : {
@@ -237,9 +231,9 @@ export const authStorage = {
   },
 
   // Clear auth status
-  clearAuthStatus: (): void => {
+  clearAuthStatus: async (): Promise<void> => {
     try {
-      storage.delete(STORAGE_KEYS.AUTH_STATUS);
+      await AsyncStorage.removeItem(STORAGE_KEYS.AUTH_STATUS);
     } catch (error) {
       console.error('Failed to clear auth status:', error);
     }

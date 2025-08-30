@@ -53,26 +53,30 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
     },
   });
 
-  const onSubmit = (step2Data: OnboardingStep2Data) => {
-    // Save step 2 data to storage (step 1 was already saved)
-    saveStep2Data(step2Data);
-    
-    // Combine both steps data for logging
-    const completeOnboardingData = {
-      ...step1Data,
-      ...step2Data,
-    };
-    console.log('Complete onboarding data:', completeOnboardingData);
-    
-    Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
-      {
-        text: 'Get Started',
-        onPress: () => {
-          // Navigate to main app (will be implemented)
-          console.log('Navigate to main app');
+  const onSubmit = async (step2Data: OnboardingStep2Data) => {
+    try {
+      // Save step 2 data to storage (step 1 was already saved)
+      await saveStep2Data(step2Data);
+      
+      // Combine both steps data for logging
+      const completeOnboardingData = {
+        ...step1Data,
+        ...step2Data,
+      };
+      console.log('Complete onboarding data:', completeOnboardingData);
+      
+      Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
+        {
+          text: 'Get Started',
+          onPress: () => {
+            // Navigate to main app (will be implemented)
+            console.log('Navigate to main app');
+          },
         },
-      },
-    ]);
+      ]);
+    } catch (error) {
+      console.error('Failed to save step 2 data:', error);
+    }
   };
 
   const onSkip = () => {
