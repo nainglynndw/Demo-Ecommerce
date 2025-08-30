@@ -8,7 +8,8 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useForm, Controller} from 'react-hook-form';
 import {OnboardingStep1Data} from '../../types';
-import {useTheme} from '../../../context/ThemeContext';
+import {useThemeStore} from '../../../stores/themeStore';
+import {useUserStore} from '../../../stores/userStore';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthStackParamList} from '../../../navigation/AuthNavigator';
 import {createStyles} from './styles';
@@ -25,7 +26,8 @@ interface OnboardingStep1Props {
 export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
   navigation,
 }) => {
-  const {theme, setThemeMode} = useTheme();
+  const {theme, setThemeMode} = useThemeStore();
+  const {saveStep1Data} = useUserStore();
   const {
     control,
     handleSubmit,
@@ -47,6 +49,9 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
     // Set the selected theme immediately
     setThemeMode(data.preferences.theme);
     
+    // Save step 1 data to storage
+    saveStep1Data(data);
+    
     // Navigate to step 2 with step 1 data
     navigation.navigate('OnboardingStep2', {
       step1Data: data,
@@ -54,10 +59,10 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
   };
 
   const onSkip = () => {
-    // Save minimal data and go to main app
-    // User will be prompted for missing info during purchase
-    console.log('Skipping onboarding - will prompt during purchase');
+    // Skip step 1 - user will be prompted for missing info during purchase
+    console.log('Skipping step 1 - will prompt during purchase');
     // Navigate to main app (will be implemented)
+    // For now, we don't save any data
   };
 
   const styles = createStyles(theme);

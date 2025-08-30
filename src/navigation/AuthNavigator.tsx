@@ -4,7 +4,7 @@ import { LoginScreen } from '../auth/screens/Login';
 import { SignUpScreen } from '../auth/screens/SignUp';
 import { OnboardingStep1Screen } from '../auth/screens/OnboardingStep1';
 import { OnboardingStep2Screen } from '../auth/screens/OnboardingStep2';
-import { useTheme } from '../context/ThemeContext';
+import { useThemeStore } from '../stores/themeStore';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -24,7 +24,7 @@ export type AuthStackParamList = {
 const Stack = createStackNavigator<AuthStackParamList>();
 
 export const AuthNavigator: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   return (
     <Stack.Navigator

@@ -9,7 +9,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useForm, Controller} from 'react-hook-form';
 import {SignupData} from '../../types';
-import {useTheme} from '../../../context/ThemeContext';
+import {useThemeStore} from '../../../stores/themeStore';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthStackParamList} from '../../../navigation/AuthNavigator';
 import {createStyles} from './styles';
@@ -21,7 +21,7 @@ interface SignUpScreenProps {
 }
 
 export const SignUpScreen: React.FC<SignUpScreenProps> = ({navigation}) => {
-  const {theme} = useTheme();
+  const {theme} = useThemeStore();
   const {
     control,
     handleSubmit,

@@ -2,7 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthNavigator} from './AuthNavigator';
-import {useTheme} from '../context/ThemeContext';
+import {useThemeStore} from '../stores/themeStore';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -12,7 +12,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const RootNavigator: React.FC = () => {
-  const {theme} = useTheme();
+  const {theme} = useThemeStore();
 
   const navigationTheme = {
     dark: theme.mode === 'dark',

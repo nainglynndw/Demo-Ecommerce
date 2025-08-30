@@ -9,7 +9,8 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useForm, Controller} from 'react-hook-form';
 import {OnboardingStep2Data} from '../../types';
-import {useTheme} from '../../../context/ThemeContext';
+import {useThemeStore} from '../../../stores/themeStore';
+import {useUserStore} from '../../../stores/userStore';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {AuthStackParamList} from '../../../navigation/AuthNavigator';
@@ -31,7 +32,8 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   navigation,
   route,
 }) => {
-  const {theme} = useTheme();
+  const {theme} = useThemeStore();
+  const {saveStep2Data} = useUserStore();
   const {step1Data} = route.params;
   
   const {
@@ -52,13 +54,14 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   });
 
   const onSubmit = (step2Data: OnboardingStep2Data) => {
-    // Combine both steps data
+    // Save step 2 data to storage (step 1 was already saved)
+    saveStep2Data(step2Data);
+    
+    // Combine both steps data for logging
     const completeOnboardingData = {
       ...step1Data,
       ...step2Data,
     };
-    
-    // Save complete user data (will be replaced with actual storage)
     console.log('Complete onboarding data:', completeOnboardingData);
     
     Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
@@ -73,9 +76,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   };
 
   const onSkip = () => {
-    // Save step 1 data only, skip address for now
+    // Step 1 data is already saved, just skip address for now
     // User will be prompted for address during first purchase
-    console.log('Saving basic info only, skipping address');
+    console.log('Skipping address - step 1 data already saved');
     console.log('Step 1 data:', step1Data);
     
     Alert.alert('Profile Saved', 'You can add your address later when making your first purchase.', [

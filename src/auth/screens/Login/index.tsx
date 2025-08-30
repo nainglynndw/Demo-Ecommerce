@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { LoginData } from '../../types';
-import { useTheme } from '../../../context/ThemeContext';
+import { useThemeStore } from '../../../stores/themeStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/AuthNavigator';
 import { createStyles } from './styles';
@@ -18,7 +18,7 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
   const {
     control,
     handleSubmit,
