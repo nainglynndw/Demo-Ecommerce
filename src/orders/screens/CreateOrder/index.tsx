@@ -3,14 +3,12 @@ import {
   View,
   Text,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useProduct } from '../../../hooks/useProducts';
@@ -19,6 +17,13 @@ import { useThemeStore } from '../../../stores/themeStore';
 import { useUserStore } from '../../../stores/userStore';
 import { OrderFormData, CreateOrderRequest } from '../../../types/order';
 import { createStyles } from './styles';
+import {
+  ProductSummary,
+  QuantityInput,
+  FormInput,
+  PaymentMethodSelector,
+  CardInfoForm,
+} from './components';
 
 type CreateOrderNavigationProp = StackNavigationProp<any, 'CreateOrder'>;
 type CreateOrderRouteProp = RouteProp<
@@ -55,10 +60,21 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
       state: userProfile?.address?.state || '',
       zipCode: userProfile?.address?.zipCode || '',
       country: userProfile?.address?.country || 'Myanmar',
+      paymentMethod: 'credit_card',
+      cardNumber: '',
+      cardExpiry: '',
+      cardCvv: '',
+      cardHolderName: '',
     },
   });
 
   const styles = createStyles(theme);
+
+  // Watch payment method to conditionally show card fields
+  const selectedPaymentMethod = useWatch({
+    control,
+    name: 'paymentMethod',
+  });
 
   const onSubmit = async (data: OrderFormData) => {
     try {
@@ -102,6 +118,34 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
       if (!data.country || data.country.trim().length === 0) {
         validationErrors.push('Please enter your country');
       }
+      if (!data.paymentMethod) {
+        validationErrors.push('Please select a payment method');
+      }
+
+      // Card validation for credit/debit cards
+      if (
+        data.paymentMethod === 'credit_card' ||
+        data.paymentMethod === 'debit_card'
+      ) {
+        if (
+          !data.cardNumber ||
+          !/^\d{4}\s\d{4}\s\d{4}\s\d{4}$/.test(data.cardNumber)
+        ) {
+          validationErrors.push('Please enter a valid card number (16 digits)');
+        }
+        if (
+          !data.cardExpiry ||
+          !/^(0[1-9]|1[0-2])\/\d{2}$/.test(data.cardExpiry)
+        ) {
+          validationErrors.push('Please enter a valid expiry date (MM/YY)');
+        }
+        if (!data.cardCvv || !/^\d{3,4}$/.test(data.cardCvv)) {
+          validationErrors.push('Please enter a valid CVV (3-4 digits)');
+        }
+        if (!data.cardHolderName || data.cardHolderName.trim().length < 2) {
+          validationErrors.push('Please enter the cardholder name');
+        }
+      }
 
       if (validationErrors.length > 0) {
         Alert.alert('Please Fix the Following:', validationErrors.join('\n\n'));
@@ -114,12 +158,16 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
       }
 
       const totalAmount = product.price * data.quantity;
+      const paymentMethodLabel = {
+        credit_card: 'Credit Card',
+        debit_card: 'Debit Card',
+      }[data.paymentMethod];
 
       Alert.alert(
         'Order Confirmation',
         `Order Total: $${totalAmount.toFixed(
           2,
-        )}\n\nThis is a demo - no payment processed.`,
+        )}\nPayment Method: ${paymentMethodLabel}\n\nThis is a demo - no payment processed.`,
         [
           { text: 'Cancel', style: 'cancel' },
           {
@@ -147,10 +195,9 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
                   userEmail: userProfile.email!!,
                 });
 
-                // Update user profile with order information if it's missing
-                const shouldUpdateProfile = 
-                  !userProfile.name || 
-                  !userProfile.phone || 
+                const shouldUpdateProfile =
+                  !userProfile.name ||
+                  !userProfile.phone ||
                   !userProfile.address?.street ||
                   !userProfile.address?.city ||
                   !userProfile.address?.state ||
@@ -164,16 +211,21 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
                       name: data.customerName || userProfile.name,
                       phone: data.customerPhone || userProfile.phone,
                       address: {
-                        street: data.street || userProfile.address?.street || '',
+                        street:
+                          data.street || userProfile.address?.street || '',
                         city: data.city || userProfile.address?.city || '',
                         state: data.state || userProfile.address?.state || '',
-                        zipCode: data.zipCode || userProfile.address?.zipCode || '',
-                        country: data.country || userProfile.address?.country || '',
+                        zipCode:
+                          data.zipCode || userProfile.address?.zipCode || '',
+                        country:
+                          data.country || userProfile.address?.country || '',
                       },
                     });
                   } catch (updateError) {
-                    console.log('Failed to update profile from order:', updateError);
-                    // Don't show error to user as order was successful
+                    console.log(
+                      'Failed to update profile from order:',
+                      updateError,
+                    );
                   }
                 }
 
@@ -238,218 +290,103 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Product Summary */}
-        <View style={styles.productSummary}>
-          <Image
-            source={{ uri: product.images[0] }}
-            style={styles.productImage}
-            resizeMode="cover"
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
-            <Text style={styles.productStock}>
-              {product.stock > 0
-                ? `${product.stock} available`
-                : 'Out of stock'}
-            </Text>
-          </View>
-        </View>
+        <ProductSummary product={product} theme={theme} />
 
         <View style={styles.form}>
-          {/* Quantity */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Quantity *</Text>
-            <Controller
-              control={control}
-              name="quantity"
-              rules={{
-                required: 'Quantity is required',
-                min: { value: 1, message: 'Minimum quantity is 1' },
-                max: {
-                  value: product.stock,
-                  message: `Maximum available: ${product.stock}`,
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.quantity && styles.inputError]}
-                  placeholder="1"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value?.toString() || ''}
-                  onChangeText={text => {
-                    if (text === '') {
-                      onChange('');
-                      return;
-                    }
-                    const num = parseInt(text, 10);
-                    if (!isNaN(num) && num >= 1 && num <= product.stock) {
-                      onChange(num);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (value.toString() === '' || value < 1) {
-                      onChange(1);
-                    }
-                    onBlur();
-                  }}
-                  keyboardType="numeric"
-                />
-              )}
-            />
-            {errors.quantity && (
-              <Text style={styles.errorText}>{errors.quantity.message}</Text>
-            )}
-          </View>
+          <QuantityInput
+            control={control}
+            errors={errors}
+            product={product}
+            theme={theme}
+          />
 
-          {/* Customer Information */}
           <Text style={styles.sectionTitle}>Customer Information</Text>
+          <FormInput
+            name="customerName"
+            label="Full Name"
+            placeholder="Enter your full name"
+            control={control}
+            errors={errors}
+            theme={theme}
+            rules={{
+              required: 'Name is required',
+              minLength: {
+                value: 2,
+                message: 'Name must be at least 2 characters',
+              },
+            }}
+            autoCapitalize="words"
+            required
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Full Name *</Text>
-            <Controller
-              control={control}
-              name="customerName"
-              rules={{
-                required: 'Name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters',
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.customerName && styles.inputError,
-                  ]}
-                  placeholder="Enter your full name"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  autoCapitalize="words"
-                />
-              )}
-            />
-            {errors.customerName && (
-              <Text style={styles.errorText}>
-                {errors.customerName.message}
-              </Text>
-            )}
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Phone Number *</Text>
-            <Controller
-              control={control}
-              name="customerPhone"
-              rules={{
-                required: 'Phone number is required',
-                pattern: {
-                  value: /^[+]?[\d\s\-\(\)]{10,}$/,
-                  message: 'Please enter a valid phone number',
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.customerPhone && styles.inputError,
-                  ]}
-                  placeholder="Enter your phone number"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="phone-pad"
-                />
-              )}
-            />
-            {errors.customerPhone && (
-              <Text style={styles.errorText}>
-                {errors.customerPhone.message}
-              </Text>
-            )}
-          </View>
+          <FormInput
+            name="customerPhone"
+            label="Phone Number"
+            placeholder="Enter your phone number"
+            control={control}
+            errors={errors}
+            theme={theme}
+            rules={{
+              required: 'Phone number is required',
+              pattern: {
+                value: /^[+]?[\d\s\-\(\)]{10,}$/,
+                message: 'Please enter a valid phone number',
+              },
+            }}
+            keyboardType="phone-pad"
+            required
+          />
 
           {/* Shipping Address */}
           <Text style={styles.sectionTitle}>Shipping Address</Text>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Street Address *</Text>
-            <Controller
-              control={control}
-              name="street"
-              rules={{ required: 'Street address is required' }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.street && styles.inputError]}
-                  placeholder="Enter street address"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                />
-              )}
-            />
-            {errors.street && (
-              <Text style={styles.errorText}>{errors.street.message}</Text>
-            )}
-          </View>
+          <FormInput
+            name="street"
+            label="Street Address"
+            placeholder="Enter street address"
+            control={control}
+            errors={errors}
+            theme={theme}
+            rules={{ required: 'Street address is required' }}
+            required
+          />
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <Text style={styles.label}>City *</Text>
-              <Controller
-                control={control}
+              <FormInput
                 name="city"
-                rules={{ required: 'City is required' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={[styles.input, errors.city && styles.inputError]}
-                    placeholder="City"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-              />
-              {errors.city && (
-                <Text style={styles.errorText}>{errors.city.message}</Text>
-              )}
-            </View>
-
-            <View style={styles.halfInput}>
-              <Text style={styles.label}>State *</Text>
-              <Controller
+                label="City"
+                placeholder="City"
                 control={control}
-                name="state"
-                rules={{ required: 'State is required' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={[styles.input, errors.state && styles.inputError]}
-                    placeholder="State"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
+                errors={errors}
+                theme={theme}
+                rules={{ required: 'City is required' }}
+                required
               />
-              {errors.state && (
-                <Text style={styles.errorText}>{errors.state.message}</Text>
-              )}
+            </View>
+            <View style={styles.halfInput}>
+              <FormInput
+                name="state"
+                label="State"
+                placeholder="State"
+                control={control}
+                errors={errors}
+                theme={theme}
+                rules={{ required: 'State is required' }}
+                required
+              />
             </View>
           </View>
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <Text style={styles.label}>ZIP Code *</Text>
-              <Controller
-                control={control}
+              <FormInput
                 name="zipCode"
+                label="ZIP Code"
+                placeholder="12345"
+                control={control}
+                errors={errors}
+                theme={theme}
                 rules={{
                   required: 'ZIP code is required',
                   pattern: {
@@ -457,45 +394,37 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
                     message: 'Please enter a valid ZIP code',
                   },
                 }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={[styles.input, errors.zipCode && styles.inputError]}
-                    placeholder="12345"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    keyboardType="numeric"
-                  />
-                )}
+                keyboardType="numeric"
+                required
               />
-              {errors.zipCode && (
-                <Text style={styles.errorText}>{errors.zipCode.message}</Text>
-              )}
             </View>
-
             <View style={styles.halfInput}>
-              <Text style={styles.label}>Country *</Text>
-              <Controller
-                control={control}
+              <FormInput
                 name="country"
+                label="Country"
+                placeholder="Myanmar"
+                control={control}
+                errors={errors}
+                theme={theme}
                 rules={{ required: 'Country is required' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    style={[styles.input, errors.country && styles.inputError]}
-                    placeholder="Myanmar"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
+                required
               />
-              {errors.country && (
-                <Text style={styles.errorText}>{errors.country.message}</Text>
-              )}
             </View>
           </View>
+
+          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <PaymentMethodSelector
+            control={control}
+            errors={errors}
+            theme={theme}
+          />
+
+          <CardInfoForm
+            control={control}
+            errors={errors}
+            theme={theme}
+            selectedPaymentMethod={selectedPaymentMethod}
+          />
 
           <TouchableOpacity
             style={styles.submitButton}

@@ -43,4 +43,9 @@ export interface OrderFormData {
   state: string;
   zipCode: string;
   country: string;
+  paymentMethod: 'credit_card' | 'debit_card';
+  cardNumber: string;
+  cardExpiry: string;
+  cardCvv: string;
+  cardHolderName: string;
 }

@@ -58,41 +58,6 @@ export const createStyles = (theme: Theme) =>
       fontWeight: '600',
       fontSize: 16,
     },
-    productSummary: {
-      flexDirection: 'row',
-      padding: 20,
-      backgroundColor: theme.colors.surface,
-      margin: 20,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    productImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      marginRight: 16,
-    },
-    productInfo: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    productName: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: theme.colors.text,
-      marginBottom: 4,
-    },
-    productPrice: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: theme.colors.primary,
-      marginBottom: 4,
-    },
-    productStock: {
-      fontSize: 14,
-      color: theme.colors.textSecondary,
-    },
     form: {
       paddingHorizontal: 20,
       paddingBottom: 20,
@@ -103,28 +68,6 @@ export const createStyles = (theme: Theme) =>
       color: theme.colors.text,
       marginBottom: 16,
       marginTop: 8,
-    },
-    inputGroup: {
-      marginBottom: 20,
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: theme.colors.text,
-      marginBottom: 8,
-    },
-    input: {
-      backgroundColor: theme.colors.surface,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      fontSize: 16,
-      color: theme.colors.text,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    inputError: {
-      borderColor: theme.colors.error,
     },
     row: {
       flexDirection: 'row',
