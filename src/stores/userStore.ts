@@ -9,7 +9,6 @@ import {
   OnboardingStatus,
   AuthStatus,
 } from '../services/storage';
-import { useThemeStore } from './themeStore';
 
 interface UserStore {
   userProfile: Partial<UserProfile> | null;
@@ -110,17 +109,12 @@ export const useUserStore = create<UserStore>((set, get) => ({
       await StorageService.saveUserProfile(profile);
 
       const { userProfile } = get();
-      const updatedProfile = {
-        ...userProfile,
-        ...profile,
-      };
-      
-      set({ userProfile: updatedProfile });
-
-      // Update theme if theme preference changed
-      if (profile.preferences?.theme) {
-        useThemeStore.getState().updateTheme(profile.preferences.theme);
-      }
+      set({
+        userProfile: {
+          ...userProfile,
+          ...profile,
+        },
+      });
     } catch (error) {
       console.error('Failed to update user profile:', error);
     }
@@ -150,9 +144,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
           isAuthenticated: false,
         },
       });
-
-      // Reset theme to system default when user logs out
-      useThemeStore.getState().updateTheme('system');
     } catch (error) {
       console.error('Failed to logout:', error);
     }
@@ -172,11 +163,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
         authStatus: auth,
         isLoading: false,
       });
-
-      // Initialize theme from user profile
-      if (profile?.preferences?.theme) {
-        useThemeStore.getState().updateTheme(profile.preferences.theme);
-      }
     } catch (error) {
       console.error('Failed to load user data:', error);
       set({ isLoading: false });

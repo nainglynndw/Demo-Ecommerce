@@ -4,11 +4,13 @@ import {
   OnboardingStep1Data,
   OnboardingStep2Data,
 } from '../auth/types';
+import { ThemeMode } from '../types/theme';
 
 // Storage keys
 const STORAGE_KEYS = {
   USER_PROFILE: 'user_profile',
   ONBOARDING_STATUS: 'onboarding_status',
+  THEME_PREFERENCE: 'theme_preference',
   AUTH_STATUS: 'auth_status',
 } as const;
 
@@ -177,6 +179,28 @@ export const onboardingStorage = {
   },
 };
 
+// Theme Storage
+export const themeStorage = {
+  // Save theme preference
+  saveTheme: async (theme: ThemeMode): Promise<void> => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME_PREFERENCE, theme);
+    } catch (error) {
+      console.error('Failed to save theme:', error);
+    }
+  },
+
+  // Get theme preference
+  getTheme: async (): Promise<ThemeMode> => {
+    try {
+      const theme = await AsyncStorage.getItem(STORAGE_KEYS.THEME_PREFERENCE);
+      return (theme as ThemeMode) || 'system';
+    } catch (error) {
+      console.error('Failed to get theme:', error);
+      return 'system';
+    }
+  },
+};
 
 // Auth Status Storage (for future login/signup logic)
 export const authStorage = {
@@ -220,5 +244,6 @@ export const authStorage = {
 export const StorageService = {
   ...userStorage,
   ...onboardingStorage,
+  ...themeStorage,
   ...authStorage,
 };

@@ -3,19 +3,24 @@ import {
   View,
   Text,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useUserStore } from '../../../stores/userStore';
 import { useThemeStore } from '../../../stores/themeStore';
 import { MainStackParamList } from '../../../navigation/MainNavigator';
 import { createStyles } from './styles';
-import { AvatarSection, FormInput, ThemeSelector } from './components';
-import { EditProfileFormData } from './types';
+import {
+  launchImageLibrary,
+  MediaType,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 
 type EditProfileNavigationProp = StackNavigationProp<
   MainStackParamList,
@@ -26,6 +31,17 @@ interface EditProfileScreenProps {
   navigation: EditProfileNavigationProp;
 }
 
+interface EditProfileFormData {
+  name: string;
+  phone: string;
+  dateOfBirth: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  theme: 'light' | 'dark' | 'system';
+}
 
 export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   navigation,
@@ -57,10 +73,41 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 
   const styles = createStyles(theme);
 
+  const handleImagePicker = () => {
+    const options = {
+      mediaType: 'photo' as MediaType,
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, (response: ImagePickerResponse) => {
+      if (response.didCancel || response.errorMessage) {
+        return;
+      }
+
+      if (response.assets && response.assets[0]) {
+        setSelectedAvatar(response.assets[0].uri || null);
+      }
+    });
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   const onSubmit = async (data: EditProfileFormData) => {
     try {
       setIsSubmitting(true);
+
+      // Update theme
+      await setThemeMode(data.theme);
 
       // Update profile
       await updateUserProfile({
@@ -81,9 +128,6 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
           theme: data.theme,
         },
       });
-
-      // Update theme
-      await setThemeMode(data.theme);
 
       Alert.alert('Success', 'Profile updated successfully!', [
         { text: 'OK', onPress: () => navigation.goBack() },
@@ -126,113 +170,199 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Personal Information</Text>
 
-          <AvatarSection
-            avatar={selectedAvatar}
-            userName={userProfile?.name}
-            onAvatarChange={setSelectedAvatar}
-            theme={theme}
-          />
+          {/* Avatar */}
+          <View style={styles.avatarSection}>
+            <Text style={styles.label}>Profile Photo</Text>
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              onPress={handleImagePicker}
+            >
+              {selectedAvatar ? (
+                <Image source={{ uri: selectedAvatar }} style={styles.avatar} />
+              ) : (
+                <View style={styles.avatarPlaceholder}>
+                  <Text style={styles.avatarText}>
+                    {getInitials(userProfile?.name)}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.avatarOverlay}>
+                <Text style={styles.avatarOverlayText}>Change</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
 
-          <FormInput
-            name="name"
-            label="Full Name"
-            placeholder="Enter your full name"
-            control={control}
-            errors={errors}
-            theme={theme}
-            rules={{
-              required: 'Name is required',
-              minLength: {
-                value: 2,
-                message: 'Name must be at least 2 characters',
-              },
-            }}
-            autoCapitalize="words"
-            required
-          />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Full Name *</Text>
+            <Controller
+              control={control}
+              name="name"
+              rules={{
+                required: 'Name is required',
+                minLength: {
+                  value: 2,
+                  message: 'Name must be at least 2 characters',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, errors.name && styles.inputError]}
+                  placeholder="Enter your full name"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  autoCapitalize="words"
+                />
+              )}
+            />
+            {errors.name && (
+              <Text style={styles.errorText}>{errors.name.message}</Text>
+            )}
+          </View>
 
-          <FormInput
-            name="phone"
-            label="Phone Number"
-            placeholder="Enter your phone number"
-            control={control}
-            errors={errors}
-            theme={theme}
-            rules={{
-              pattern: {
-                value: /^[+]?[\d\s\-\(\)]{10,}$/,
-                message: 'Please enter a valid phone number',
-              },
-            }}
-            keyboardType="phone-pad"
-          />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Phone Number</Text>
+            <Controller
+              control={control}
+              name="phone"
+              rules={{
+                pattern: {
+                  value: /^[+]?[\d\s\-\(\)]{10,}$/,
+                  message: 'Please enter a valid phone number',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, errors.phone && styles.inputError]}
+                  placeholder="Enter your phone number"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  keyboardType="phone-pad"
+                />
+              )}
+            />
+            {errors.phone && (
+              <Text style={styles.errorText}>{errors.phone.message}</Text>
+            )}
+          </View>
 
-          <FormInput
-            name="dateOfBirth"
-            label="Date of Birth"
-            placeholder="YYYY-MM-DD"
-            control={control}
-            errors={errors}
-            theme={theme}
-          />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Date of Birth</Text>
+            <Controller
+              control={control}
+              name="dateOfBirth"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  placeholder="YYYY-MM-DD"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+          </View>
         </View>
 
         {/* Address */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Address</Text>
 
-          <FormInput
-            name="street"
-            label="Street Address"
-            placeholder="Enter street address"
-            control={control}
-            errors={errors}
-            theme={theme}
-          />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Street Address</Text>
+            <Controller
+              control={control}
+              name="street"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter street address"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+          </View>
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <FormInput
-                name="city"
-                label="City"
-                placeholder="City"
+              <Text style={styles.label}>City</Text>
+              <Controller
                 control={control}
-                errors={errors}
-                theme={theme}
+                name="city"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={styles.input}
+                    placeholder="City"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
               />
             </View>
+
             <View style={styles.halfInput}>
-              <FormInput
-                name="state"
-                label="State"
-                placeholder="State"
+              <Text style={styles.label}>State</Text>
+              <Controller
                 control={control}
-                errors={errors}
-                theme={theme}
+                name="state"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={styles.input}
+                    placeholder="State"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
               />
             </View>
           </View>
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <FormInput
-                name="zipCode"
-                label="ZIP Code"
-                placeholder="12345"
+              <Text style={styles.label}>ZIP Code</Text>
+              <Controller
                 control={control}
-                errors={errors}
-                theme={theme}
-                keyboardType="numeric"
+                name="zipCode"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={styles.input}
+                    placeholder="12345"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    keyboardType="numeric"
+                  />
+                )}
               />
             </View>
+
             <View style={styles.halfInput}>
-              <FormInput
-                name="country"
-                label="Country"
-                placeholder="Country"
+              <Text style={styles.label}>Country</Text>
+              <Controller
                 control={control}
-                errors={errors}
-                theme={theme}
+                name="country"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Country"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
               />
             </View>
           </View>
@@ -242,11 +372,43 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>
 
-          <ThemeSelector
-            control={control}
-            theme={theme}
-            onThemeChange={setThemeMode}
-          />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Theme</Text>
+            <Controller
+              control={control}
+              name="theme"
+              render={({ field: { onChange, value } }) => (
+                <View style={styles.themeContainer}>
+                  {['light', 'dark', 'system'].map(themeOption => (
+                    <TouchableOpacity
+                      key={themeOption}
+                      style={[
+                        styles.themeOption,
+                        value === themeOption && styles.themeOptionSelected,
+                      ]}
+                      onPress={() => {
+                        onChange(themeOption);
+                        setThemeMode(
+                          themeOption as 'light' | 'dark' | 'system',
+                        );
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.themeOptionText,
+                          value === themeOption &&
+                            styles.themeOptionTextSelected,
+                        ]}
+                      >
+                        {themeOption.charAt(0).toUpperCase() +
+                          themeOption.slice(1)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            />
+          </View>
         </View>
 
         <View style={styles.bottomSpace} />
