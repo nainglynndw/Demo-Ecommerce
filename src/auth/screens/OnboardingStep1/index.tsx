@@ -58,7 +58,7 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
     // Skip step 1 - user will be prompted for missing info during purchase
     console.log('Skipping step 1 - will prompt during purchase');
     // Set authenticated status to navigate to main app
-    await setAuthStatus({isAuthenticated: true});
+    await setAuthStatus({ isAuthenticated: true });
   };
 
   const styles = createStyles(theme);

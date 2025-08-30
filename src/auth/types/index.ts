@@ -45,7 +45,9 @@ export interface OnboardingStep2Data {
   address: Address;
 }
 
-export interface OnboardingData extends OnboardingStep1Data, OnboardingStep2Data {
+export interface OnboardingData
+  extends OnboardingStep1Data,
+    OnboardingStep2Data {
   avatar?: string;
 }
 

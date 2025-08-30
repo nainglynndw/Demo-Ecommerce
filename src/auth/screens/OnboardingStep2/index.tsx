@@ -1,27 +1,24 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useForm, Controller} from 'react-hook-form';
-import {OnboardingStep2Data} from '../../types';
-import {useThemeStore} from '../../../stores/themeStore';
-import {useUserStore} from '../../../stores/userStore';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
-import {AuthStackParamList} from '../../../navigation/AuthNavigator';
-import {createStyles} from './styles';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForm, Controller } from 'react-hook-form';
+import { OnboardingStep2Data } from '../../types';
+import { useThemeStore } from '../../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { AuthStackParamList } from '../../../navigation/AuthNavigator';
+import { createStyles } from './styles';
 
 type OnboardingStep2NavigationProp = StackNavigationProp<
   AuthStackParamList,
   'OnboardingStep2'
 >;
 
-type OnboardingStep2RouteProp = RouteProp<AuthStackParamList, 'OnboardingStep2'>;
+type OnboardingStep2RouteProp = RouteProp<
+  AuthStackParamList,
+  'OnboardingStep2'
+>;
 
 interface OnboardingStep2Props {
   navigation: OnboardingStep2NavigationProp;
@@ -32,14 +29,14 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   navigation,
   route,
 }) => {
-  const {theme} = useThemeStore();
-  const {saveStep2Data, setAuthStatus} = useUserStore();
-  const {step1Data} = route.params;
-  
+  const { theme } = useThemeStore();
+  const { saveStep2Data, setAuthStatus } = useUserStore();
+  const { step1Data } = route.params;
+
   const {
     control,
     handleSubmit,
-    formState: {errors, isValid},
+    formState: { errors, isValid },
   } = useForm<OnboardingStep2Data>({
     defaultValues: {
       dateOfBirth: '',
@@ -57,20 +54,20 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
     try {
       // Save step 2 data to storage (step 1 was already saved)
       await saveStep2Data(step2Data);
-      
+
       // Combine both steps data for logging
       const completeOnboardingData = {
         ...step1Data,
         ...step2Data,
       };
       console.log('Complete onboarding data:', completeOnboardingData);
-      
+
       Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
         {
           text: 'Get Started',
           onPress: async () => {
             // Set authenticated status to navigate to main app
-            await setAuthStatus({isAuthenticated: true});
+            await setAuthStatus({ isAuthenticated: true });
           },
         },
       ]);
@@ -84,16 +81,20 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
     // User will be prompted for address during first purchase
     console.log('Skipping address - step 1 data already saved');
     console.log('Step 1 data:', step1Data);
-    
-    Alert.alert('Profile Saved', 'You can add your address later when making your first purchase.', [
-      {
-        text: 'Continue',
-        onPress: async () => {
-          // Set authenticated status to navigate to main app
-          await setAuthStatus({isAuthenticated: true});
+
+    Alert.alert(
+      'Profile Saved',
+      'You can add your address later when making your first purchase.',
+      [
+        {
+          text: 'Continue',
+          onPress: async () => {
+            // Set authenticated status to navigate to main app
+            await setAuthStatus({ isAuthenticated: true });
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const styles = createStyles(theme);
@@ -104,7 +105,7 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
         <View style={styles.header}>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
-              <View style={[styles.progressFill, {width: '100%'}]} />
+              <View style={[styles.progressFill, { width: '100%' }]} />
             </View>
             <Text style={styles.progressText}>Step 2 of 2</Text>
           </View>
@@ -126,9 +127,12 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                   message: 'Please enter date in YYYY-MM-DD format',
                 },
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[styles.input, errors.dateOfBirth && styles.inputError]}
+                  style={[
+                    styles.input,
+                    errors.dateOfBirth && styles.inputError,
+                  ]}
                   placeholder="YYYY-MM-DD (optional)"
                   placeholderTextColor={theme.colors.textSecondary}
                   value={value}
@@ -145,7 +149,7 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
 
           <View style={styles.addressSection}>
             <Text style={styles.sectionTitle}>Shipping Address *</Text>
-            
+
             <View style={styles.inputGroup}>
               <Controller
                 control={control}
@@ -153,9 +157,12 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                 rules={{
                   required: 'Street address is required',
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={[styles.input, errors.address?.street && styles.inputError]}
+                    style={[
+                      styles.input,
+                      errors.address?.street && styles.inputError,
+                    ]}
                     placeholder="Street address"
                     placeholderTextColor={theme.colors.textSecondary}
                     value={value}
@@ -165,7 +172,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                 )}
               />
               {errors.address?.street && (
-                <Text style={styles.errorText}>{errors.address.street.message}</Text>
+                <Text style={styles.errorText}>
+                  {errors.address.street.message}
+                </Text>
               )}
             </View>
 
@@ -177,9 +186,12 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                   rules={{
                     required: 'City is required',
                   }}
-                  render={({field: {onChange, onBlur, value}}) => (
+                  render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={[styles.input, errors.address?.city && styles.inputError]}
+                      style={[
+                        styles.input,
+                        errors.address?.city && styles.inputError,
+                      ]}
                       placeholder="City"
                       placeholderTextColor={theme.colors.textSecondary}
                       value={value}
@@ -189,7 +201,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                   )}
                 />
                 {errors.address?.city && (
-                  <Text style={styles.errorText}>{errors.address.city.message}</Text>
+                  <Text style={styles.errorText}>
+                    {errors.address.city.message}
+                  </Text>
                 )}
               </View>
 
@@ -200,9 +214,12 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                   rules={{
                     required: 'State is required',
                   }}
-                  render={({field: {onChange, onBlur, value}}) => (
+                  render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={[styles.input, errors.address?.state && styles.inputError]}
+                      style={[
+                        styles.input,
+                        errors.address?.state && styles.inputError,
+                      ]}
                       placeholder="State"
                       placeholderTextColor={theme.colors.textSecondary}
                       value={value}
@@ -212,7 +229,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                   )}
                 />
                 {errors.address?.state && (
-                  <Text style={styles.errorText}>{errors.address.state.message}</Text>
+                  <Text style={styles.errorText}>
+                    {errors.address.state.message}
+                  </Text>
                 )}
               </View>
             </View>
@@ -228,9 +247,12 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                     message: 'Please enter a valid ZIP code',
                   },
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={[styles.input, errors.address?.zipCode && styles.inputError]}
+                    style={[
+                      styles.input,
+                      errors.address?.zipCode && styles.inputError,
+                    ]}
                     placeholder="ZIP Code"
                     placeholderTextColor={theme.colors.textSecondary}
                     value={value}
@@ -241,7 +263,9 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
                 )}
               />
               {errors.address?.zipCode && (
-                <Text style={styles.errorText}>{errors.address.zipCode.message}</Text>
+                <Text style={styles.errorText}>
+                  {errors.address.zipCode.message}
+                </Text>
               )}
             </View>
           </View>
@@ -249,19 +273,19 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
           <TouchableOpacity
             style={[styles.button, !isValid && styles.buttonDisabled]}
             onPress={handleSubmit(onSubmit)}
-            disabled={!isValid}>
+            disabled={!isValid}
+          >
             <Text style={styles.buttonText}>Complete Setup</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.skipButton}
-            onPress={onSkip}>
+          <TouchableOpacity style={styles.skipButton} onPress={onSkip}>
             <Text style={styles.skipButtonText}>Add address later</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.backButtonText}>← Back</Text>
           </TouchableOpacity>
         </View>

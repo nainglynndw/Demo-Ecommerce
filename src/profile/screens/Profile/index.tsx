@@ -1,10 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useUserStore } from '../../stores/userStore';
-import { useThemeStore } from '../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
+import { useThemeStore } from '../../../stores/themeStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { MainStackParamList } from '../../navigation/MainNavigator';
-import { Avatar, ProfileSection, LogoutButton } from '../components';
+import { MainStackParamList } from '../../../navigation/MainNavigator';
+import { Avatar, ProfileSection, LogoutButton } from '../../components';
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   MainStackParamList,
@@ -15,13 +15,9 @@ type Props = {
   navigation: ProfileScreenNavigationProp;
 };
 
-export const ProfileScreen: React.FC<Props> = () => {
-  const { userProfile, logout } = useUserStore();
+export const Profile: React.FC<Props> = () => {
+  const { userProfile } = useUserStore();
   const { theme } = useThemeStore();
-
-  const handleLogout = useCallback(async () => {
-    await logout();
-  }, [logout]);
 
   const profileSections = useMemo(
     () => [
@@ -100,7 +96,7 @@ export const ProfileScreen: React.FC<Props> = () => {
         />
       ))}
 
-      <LogoutButton onPress={handleLogout} />
+      <LogoutButton />
     </ScrollView>
   );
 };
