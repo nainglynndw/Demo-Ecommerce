@@ -81,14 +81,65 @@ export const createStyles = (theme: Theme) =>
     halfInput: {
       flex: 1,
     },
-    imageInputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 12,
+    imagePreviewContainer: {
+      marginTop: 12,
     },
-    imageInput: {
-      flex: 1,
-      marginRight: 8,
+    imagePreviewItem: {
+      flex: 0.48,
+      margin: '1%',
+      backgroundColor: theme.colors.surface,
+      borderRadius: 8,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    imagePreview: {
+      width: '100%',
+      height: 120,
+    },
+    removeImageButton: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      backgroundColor: theme.colors.error,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    imageInfo: {
+      padding: 8,
+    },
+    imageFileName: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: theme.colors.text,
+      marginBottom: 2,
+    },
+    imageFileSize: {
+      fontSize: 10,
+      color: theme.colors.textSecondary,
+    },
+    emptyImageContainer: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 8,
+      padding: 24,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderStyle: 'dashed',
+    },
+    emptyImageText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    emptyImageSubtext: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
     },
     addButton: {
       backgroundColor: theme.colors.primary,
@@ -101,17 +152,9 @@ export const createStyles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: '600',
     },
-    removeButton: {
-      backgroundColor: theme.colors.error,
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
     removeButtonText: {
       color: 'white',
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: 'bold',
     },
     submitButton: {

@@ -7,11 +7,19 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Picker } from '@react-native-picker/picker';
+import {
+  launchImageLibrary,
+  launchCamera,
+  ImagePickerResponse,
+  MediaType,
+} from 'react-native-image-picker';
 import { useCreateProduct } from '../../../hooks/useProducts';
 import { useThemeStore } from '../../../stores/themeStore';
 import {
@@ -26,12 +34,19 @@ interface CreateProductScreenProps {
   navigation: CreateProductNavigationProp;
 }
 
+interface SelectedImage {
+  uri: string;
+  fileName?: string;
+  type?: string;
+  fileSize?: number;
+}
+
 export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
   navigation,
 }) => {
   const { theme } = useThemeStore();
   const createProductMutation = useCreateProduct();
-  const [imageUrls, setImageUrls] = useState<string[]>(['']);
+  const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
 
   const {
     control,
@@ -44,7 +59,7 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
       description: '',
       price: 0,
       category: 'Electronics',
-      images: [''],
+      images: [],
       stock: 0,
     },
   });
@@ -53,15 +68,15 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
 
   const onSubmit = async (data: CreateProductRequest) => {
     try {
-      const validImages = imageUrls.filter(url => url.trim() !== '');
-      if (validImages.length === 0) {
-        Alert.alert('Error', 'Please add at least one product image URL');
+      if (selectedImages.length === 0) {
+        Alert.alert('Error', 'Please add at least one product image');
         return;
       }
 
+      const imageUris = selectedImages.map(img => img.uri);
       const productData = {
         ...data,
-        images: validImages,
+        images: imageUris,
       };
 
       await createProductMutation.mutateAsync(productData);
@@ -71,27 +86,85 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
       ]);
 
       reset();
-      setImageUrls(['']);
+      setSelectedImages([]);
     } catch (error) {
       Alert.alert('Error', 'Failed to create product. Please try again.');
     }
   };
 
-  const addImageUrl = () => {
-    setImageUrls([...imageUrls, '']);
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Select Image',
+      'Choose how you want to select an image',
+      [
+        { text: 'Camera', onPress: () => openCamera() },
+        { text: 'Gallery', onPress: () => openImageLibrary() },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
   };
 
-  const removeImageUrl = (index: number) => {
-    if (imageUrls.length > 1) {
-      const newUrls = imageUrls.filter((_, i) => i !== index);
-      setImageUrls(newUrls);
-    }
+  const openImageLibrary = () => {
+    const options = {
+      mediaType: 'photo' as MediaType,
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, (response: ImagePickerResponse) => {
+      if (response.didCancel || response.errorMessage) {
+        return;
+      }
+
+      if (response.assets && response.assets[0]) {
+        const asset = response.assets[0];
+        const newImage: SelectedImage = {
+          uri: asset.uri!,
+          fileName: asset.fileName,
+          type: asset.type,
+          fileSize: asset.fileSize,
+        };
+        setSelectedImages(prev => [...prev, newImage]);
+      }
+    });
   };
 
-  const updateImageUrl = (index: number, url: string) => {
-    const newUrls = [...imageUrls];
-    newUrls[index] = url;
-    setImageUrls(newUrls);
+  const openCamera = () => {
+    const options = {
+      mediaType: 'photo' as MediaType,
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchCamera(options, (response: ImagePickerResponse) => {
+      if (response.didCancel || response.errorMessage) {
+        return;
+      }
+
+      if (response.assets && response.assets[0]) {
+        const asset = response.assets[0];
+        const newImage: SelectedImage = {
+          uri: asset.uri!,
+          fileName: asset.fileName,
+          type: asset.type,
+          fileSize: asset.fileSize,
+        };
+        setSelectedImages(prev => [...prev, newImage]);
+      }
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return '';
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(1)} MB`;
   };
 
   return (
@@ -106,6 +179,7 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
         <Text style={styles.title}>Create Product</Text>
       </View>
       <ScrollView
+        nestedScrollEnabled
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
@@ -258,29 +332,55 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
           <View style={styles.inputGroup}>
             <View style={styles.labelContainer}>
               <Text style={styles.label}>Product Images *</Text>
-              <TouchableOpacity style={styles.addButton} onPress={addImageUrl}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={showImagePickerOptions}
+              >
                 <Text style={styles.addButtonText}>+ Add Image</Text>
               </TouchableOpacity>
             </View>
-            {imageUrls.map((url, index) => (
-              <View key={index} style={styles.imageInputContainer}>
-                <TextInput
-                  style={[styles.input, styles.imageInput]}
-                  placeholder="Enter image URL"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={url}
-                  onChangeText={text => updateImageUrl(index, text)}
+
+            {selectedImages.length > 0 && (
+              <View style={styles.imagePreviewContainer}>
+                <FlatList
+                  horizontal={true}
+                  data={selectedImages}
+                  keyExtractor={(item, index) => `image-${index}`}
+                  renderItem={({ item, index }) => (
+                    <View style={styles.imagePreviewItem}>
+                      <Image
+                        source={{ uri: item.uri }}
+                        style={styles.imagePreview}
+                        resizeMode="cover"
+                      />
+                      <TouchableOpacity
+                        style={styles.removeImageButton}
+                        onPress={() => removeImage(index)}
+                      >
+                        <Text style={styles.removeButtonText}>×</Text>
+                      </TouchableOpacity>
+                      <View style={styles.imageInfo}>
+                        <Text style={styles.imageFileName} numberOfLines={1}>
+                          {item.fileName || `Image ${index + 1}`}
+                        </Text>
+                        <Text style={styles.imageFileSize}>
+                          {formatFileSize(item.fileSize)}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 />
-                {imageUrls.length > 1 && (
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => removeImageUrl(index)}
-                  >
-                    <Text style={styles.removeButtonText}>×</Text>
-                  </TouchableOpacity>
-                )}
               </View>
-            ))}
+            )}
+
+            {selectedImages.length === 0 && (
+              <View style={styles.emptyImageContainer}>
+                <Text style={styles.emptyImageText}>No images selected</Text>
+                <Text style={styles.emptyImageSubtext}>
+                  Tap "Add Image" to select photos
+                </Text>
+              </View>
+            )}
           </View>
 
           <TouchableOpacity
