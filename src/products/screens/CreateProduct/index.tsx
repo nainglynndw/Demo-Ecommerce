@@ -43,11 +43,8 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
         return;
       }
 
-      if (!userProfile?.id) {
-        Alert.alert(
-          'Error',
-          `User not authenticated. Logging out... ${userProfile?.id}`,
-        );
+      if (!userProfile?.email) {
+        Alert.alert('Error', 'User email not found. Please login again.');
         await logout();
         return;
       }
@@ -60,7 +57,7 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
 
       await createProductMutation.mutateAsync({
         data: productData,
-        userId: userProfile.id,
+        userEmail: userProfile.email,
       });
 
       Alert.alert('Success', 'Product created successfully!', [

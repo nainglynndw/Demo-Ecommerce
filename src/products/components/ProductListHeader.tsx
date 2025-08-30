@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { Theme } from '../../types/theme';
 import { PRODUCT_CATEGORIES } from '../../types/product';
+import { useNavigation } from '@react-navigation/native';
+import type { INavigationProp } from '../../navigation/type';
 
 interface ProductListHeaderProps {
   styles: any;
@@ -20,6 +22,7 @@ interface ProductListHeaderProps {
 export const ProductListHeader = memo<ProductListHeaderProps>(
   ({ styles, theme, onSearch, onCategoryFilter, onCreateProduct }) => {
     const [searchText, setSearchText] = useState('');
+    const navigation = useNavigation<INavigationProp>();
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
     const handleSearch = useCallback(() => {
@@ -40,16 +43,28 @@ export const ProductListHeader = memo<ProductListHeaderProps>(
       [selectedCategory, onCategoryFilter],
     );
 
+    const handleOnProfile = useCallback(() => {
+      navigation.navigate('Profile');
+    }, [navigation]);
+
     return (
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Products</Text>
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={onCreateProduct}
-          >
-            <Text style={styles.createButtonText}>+ Create</Text>
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity
+              style={styles.profileButton}
+              onPress={handleOnProfile}
+            >
+              <Text style={styles.profileButtonText}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={onCreateProduct}
+            >
+              <Text style={styles.createButtonText}>+ Create</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.searchContainer}>

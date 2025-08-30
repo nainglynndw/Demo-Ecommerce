@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { SignupData } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/AuthNavigator';
 import { Header, FormField, Button, Footer } from '../../components';
@@ -21,6 +22,7 @@ interface SignUpScreenProps {
 export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
   ({ navigation }) => {
     const { theme } = useThemeStore();
+    const { updateUserProfile } = useUserStore();
     const {
       control,
       handleSubmit,
@@ -37,16 +39,23 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
     const password = watch('password');
 
     const onSubmit = useCallback(
-      (_data: SignupData & { confirmPassword: string }) => {
-        // Mock signup logic - will be replaced with actual auth service
-        Alert.alert('Success', 'Account created successfully!', [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('OnboardingStep1'),
-          },
-        ]);
+      async (data: SignupData & { confirmPassword: string }) => {
+        try {
+          await updateUserProfile({
+            email: data.email,
+          });
+
+          Alert.alert('Success', 'Account created successfully!', [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('OnboardingStep1'),
+            },
+          ]);
+        } catch (error) {
+          Alert.alert('Error', 'Failed to create account. Please try again.');
+        }
       },
-      [navigation],
+      [navigation, updateUserProfile],
     );
 
     const handleSignInPress = useCallback(() => {

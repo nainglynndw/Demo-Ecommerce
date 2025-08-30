@@ -25,6 +25,23 @@ export const createStyles = (theme: Theme) =>
       fontWeight: 'bold',
       color: theme.colors.text,
     },
+    headerButtons: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    profileButton: {
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+    },
+    profileButtonText: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+      fontSize: 16,
+    },
     createButton: {
       backgroundColor: theme.colors.primary,
       paddingHorizontal: 16,

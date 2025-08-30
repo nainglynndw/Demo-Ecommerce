@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ProductListScreen } from '../products/screens/ProductList';
 import { ProductDetailScreen } from '../products/screens/ProductDetail';
 import { CreateProductScreen } from '../products/screens/CreateProduct';
+import { CreateOrderScreen } from '../orders/screens/CreateOrder';
 import { Profile } from '../profile/screens/Profile';
 import { useThemeStore } from '../stores/themeStore';
 
@@ -50,6 +51,13 @@ export const MainNavigator: React.FC = () => {
         }}
       />
       <Stack.Screen name="CreateProduct" component={CreateProductScreen} />
+      <Stack.Screen
+        name="CreateOrder"
+        component={CreateOrderScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="Profile"
         component={Profile}

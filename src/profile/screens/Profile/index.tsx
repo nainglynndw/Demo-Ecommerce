@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useUserStore } from '../../../stores/userStore';
 import { useThemeStore } from '../../../stores/themeStore';
+import { useOrders } from '../../../hooks/useOrders';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MainStackParamList } from '../../../navigation/MainNavigator';
 import { Avatar, ProfileSection, LogoutButton } from '../../components';
@@ -18,13 +19,15 @@ type Props = {
 export const Profile: React.FC<Props> = () => {
   const { userProfile } = useUserStore();
   const { theme } = useThemeStore();
+  const { data: orders = [], isLoading: ordersLoading } = useOrders(
+    userProfile?.email || '',
+  );
 
   const profileSections = useMemo(
     () => [
       {
         title: 'Personal Information',
         data: [
-          { label: 'Name', value: userProfile?.name || 'Not set' },
           { label: 'Email', value: userProfile?.email || 'Not set' },
           { label: 'Phone', value: userProfile?.phone || 'Not set' },
           {
@@ -61,8 +64,21 @@ export const Profile: React.FC<Props> = () => {
           },
         ],
       },
+      {
+        title: 'Order History',
+        data: ordersLoading
+          ? [{ label: 'Loading...', value: '' }]
+          : orders.length > 0
+          ? orders.slice(0, 3).map(order => ({
+              label: `#${order.id.slice(-6)} - ${order.productName}`,
+              value: `$${order.totalAmount.toFixed(2)} - ${order.status}`,
+            }))
+          : [{ label: 'No orders yet', value: 'Place your first order!' }],
+      },
     ],
     [
+      orders,
+      ordersLoading,
       userProfile?.address?.city,
       userProfile?.address?.country,
       userProfile?.address?.state,
@@ -70,7 +86,6 @@ export const Profile: React.FC<Props> = () => {
       userProfile?.address?.zipCode,
       userProfile?.dateOfBirth,
       userProfile?.email,
-      userProfile?.name,
       userProfile?.phone,
       userProfile?.preferences?.theme,
     ],
@@ -80,12 +95,6 @@ export const Profile: React.FC<Props> = () => {
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
-          Profile
-        </Text>
-      </View>
-
       <Avatar avatar={userProfile?.avatar} name={userProfile?.name} />
 
       {profileSections.map(section => (
@@ -95,6 +104,19 @@ export const Profile: React.FC<Props> = () => {
           data={section.data}
         />
       ))}
+
+      {orders.length > 3 && (
+        <TouchableOpacity
+          style={[
+            styles.viewAllButton,
+            { backgroundColor: theme.colors.primary },
+          ]}
+        >
+          <Text style={styles.viewAllButtonText}>
+            View All Orders ({orders.length})
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <LogoutButton />
     </ScrollView>
@@ -113,5 +135,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  viewAllButton: {
+    marginHorizontal: 20,
+    marginVertical: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  viewAllButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

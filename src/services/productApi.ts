@@ -116,7 +116,7 @@ export class ProductApi {
 
   static async createProduct(
     data: CreateProductRequest,
-    userId: string,
+    userEmail: string,
   ): Promise<Product> {
     await delay(1000);
 
@@ -127,7 +127,7 @@ export class ProductApi {
       id: Date.now().toString(),
       rating: 0,
       reviews: 0,
-      createdBy: userId,
+      createdBy: userEmail,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

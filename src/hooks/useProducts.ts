@@ -38,8 +38,8 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({data, userId}: {data: CreateProductRequest; userId: string}) =>
-      ProductApi.createProduct(data, userId),
+    mutationFn: ({data, userEmail}: {data: CreateProductRequest; userEmail: string}) =>
+      ProductApi.createProduct(data, userEmail),
     onSuccess: () => {
       // Invalidate and refetch products list
       queryClient.invalidateQueries({queryKey: productKeys.lists()});
