@@ -15,6 +15,7 @@ import { useProduct, useDeleteProduct } from '../../../hooks/useProducts';
 import { useThemeStore } from '../../../stores/themeStore';
 import { useUserStore } from '../../../stores/userStore';
 import { createStyles } from './styles';
+import { formatPrice, formatRating, formatDate } from '../../../utils';
 
 type ProductDetailNavigationProp = StackNavigationProp<any, 'ProductDetail'>;
 type ProductDetailRouteProp = RouteProp<
@@ -38,18 +39,6 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
   const deleteProductMutation = useDeleteProduct();
 
   const styles = createStyles(theme);
-
-  const formatPrice = (price: number) => {
-    return `$${price.toFixed(2)}`;
-  };
-
-  const formatRating = (rating: number, reviews: number) => {
-    return `★ ${rating.toFixed(1)} (${reviews} reviews)`;
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
 
   const handleEdit = () => {
     navigation.navigate('EditProduct', { productId });
