@@ -5,10 +5,10 @@ import {
   OnboardingStep2Data,
 } from '../auth/types';
 import {
-  StorageService,
+  UserApi,
   OnboardingStatus,
   AuthStatus,
-} from '../services/storage';
+} from '../services/userApi';
 import { useThemeStore } from './themeStore';
 
 interface UserStore {
@@ -54,7 +54,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   saveStep1Data: async (data: OnboardingStep1Data) => {
     try {
-      await StorageService.saveStep1Data(data);
+      await UserApi.saveStep1Data(data);
 
       const { userProfile, onboardingStatus } = get();
       const updatedProfile = {
@@ -81,7 +81,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   saveStep2Data: async (data: OnboardingStep2Data) => {
     try {
-      await StorageService.saveStep2Data(data);
+      await UserApi.saveStep2Data(data);
 
       const { userProfile, onboardingStatus } = get();
       const updatedProfile = {
@@ -107,7 +107,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   updateUserProfile: async (profile: Partial<UserProfile>) => {
     try {
-      await StorageService.saveUserProfile(profile);
+      await UserApi.updateUserProfile(profile);
 
       const { userProfile } = get();
       const updatedProfile = {
@@ -128,7 +128,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   setAuthStatus: async (status: AuthStatus) => {
     try {
-      await StorageService.saveAuthStatus(status);
+      await UserApi.saveAuthStatus(status);
       set({ authStatus: status });
     } catch (error) {
       console.error('Failed to set auth status:', error);
@@ -137,7 +137,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   logout: async () => {
     try {
-      await StorageService.clearUserData();
+      await UserApi.clearUserData();
 
       set({
         userProfile: null,
@@ -162,9 +162,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       set({ isLoading: true });
 
-      const profile = await StorageService.getUserProfile();
-      const onboarding = await StorageService.getOnboardingStatus();
-      const auth = await StorageService.getAuthStatus();
+      const profile = await UserApi.getUserProfile();
+      const onboarding = await UserApi.getOnboardingStatus();
+      const auth = await UserApi.getAuthStatus();
 
       set({
         userProfile: profile,
