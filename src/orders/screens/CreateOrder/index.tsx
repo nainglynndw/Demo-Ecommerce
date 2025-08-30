@@ -37,7 +37,7 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
 }) => {
   const { productId } = route.params;
   const { theme } = useThemeStore();
-  const { userProfile } = useUserStore();
+  const { userProfile, updateUserProfile } = useUserStore();
   const { data: product, isLoading, error } = useProduct(productId);
   const createOrderMutation = useCreateOrder();
 
@@ -146,6 +146,36 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({
                   productPrice: product.price,
                   userEmail: userProfile.email!!,
                 });
+
+                // Update user profile with order information if it's missing
+                const shouldUpdateProfile = 
+                  !userProfile.name || 
+                  !userProfile.phone || 
+                  !userProfile.address?.street ||
+                  !userProfile.address?.city ||
+                  !userProfile.address?.state ||
+                  !userProfile.address?.zipCode ||
+                  !userProfile.address?.country;
+
+                if (shouldUpdateProfile) {
+                  try {
+                    await updateUserProfile({
+                      ...userProfile,
+                      name: data.customerName || userProfile.name,
+                      phone: data.customerPhone || userProfile.phone,
+                      address: {
+                        street: data.street || userProfile.address?.street || '',
+                        city: data.city || userProfile.address?.city || '',
+                        state: data.state || userProfile.address?.state || '',
+                        zipCode: data.zipCode || userProfile.address?.zipCode || '',
+                        country: data.country || userProfile.address?.country || '',
+                      },
+                    });
+                  } catch (updateError) {
+                    console.log('Failed to update profile from order:', updateError);
+                    // Don't show error to user as order was successful
+                  }
+                }
 
                 Alert.alert('Success', 'Order placed successfully!', [
                   { text: 'OK', onPress: () => navigation.goBack() },

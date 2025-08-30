@@ -189,15 +189,21 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
             {isProductOwner() ? (
               // Product Owner Actions
               <View style={styles.productActions}>
-                <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={handleEdit}
+                >
                   <Text style={styles.editButtonText}>Edit Product</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={handleDelete}
-                  disabled={deleteProductMutation.isPending}>
+                  disabled={deleteProductMutation.isPending}
+                >
                   <Text style={styles.deleteButtonText}>
-                    {deleteProductMutation.isPending ? 'Deleting...' : 'Delete Product'}
+                    {deleteProductMutation.isPending
+                      ? 'Deleting...'
+                      : 'Delete Product'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -209,7 +215,8 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
                   product.stock === 0 && styles.orderButtonDisabled,
                 ]}
                 onPress={handleOrder}
-                disabled={product.stock === 0}>
+                disabled={product.stock === 0}
+              >
                 <Text style={styles.orderButtonText}>
                   {product.stock > 0 ? 'Order Now' : 'Out of Stock'}
                 </Text>

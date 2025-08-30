@@ -5,6 +5,7 @@ import { ProductDetailScreen } from '../products/screens/ProductDetail';
 import { CreateProductScreen } from '../products/screens/CreateProduct';
 import { CreateOrderScreen } from '../orders/screens/CreateOrder';
 import { Profile } from '../profile/screens/Profile';
+import { EditProfileScreen } from '../profile/screens/EditProfile';
 import { useThemeStore } from '../stores/themeStore';
 
 export type MainStackParamList = {
@@ -14,6 +15,7 @@ export type MainStackParamList = {
   EditProduct: { productId: string };
   CreateOrder: { productId: string };
   Profile: undefined;
+  EditProfile: undefined;
 };
 
 const Stack = createStackNavigator<MainStackParamList>();
@@ -62,8 +64,14 @@ export const MainNavigator: React.FC = () => {
         name="Profile"
         component={Profile}
         options={{
-          headerShown: true,
-          title: 'Profile',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
