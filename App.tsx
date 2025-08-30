@@ -9,13 +9,12 @@ import {RootNavigator} from './src/navigation/RootNavigator';
 import {queryClient} from './src/config/queryClient';
 
 function App() {
-  const {theme, initializeTheme} = useThemeStore();
+  const {theme} = useThemeStore();
   const {initializeUserData} = useUserStore();
   
   React.useEffect(() => {
-    initializeTheme();
     initializeUserData();
-  }, [initializeTheme, initializeUserData]);
+  }, [initializeUserData]);
   
   return (
     <QueryClientProvider client={queryClient}>
