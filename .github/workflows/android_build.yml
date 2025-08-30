@@ -16,15 +16,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
 
-      - name: Enable Corepack
+      - name: Activate Yarn 3.6.4 via Corepack
         run: |
+          echo "COREPACK_ENABLE_DOWNLOADS=1" >> $GITHUB_ENV
           corepack enable
           corepack prepare yarn@3.6.4 --activate
+          yarn --version
+
+      - name: Cache Yarn (Berry)
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            .yarn/build-state.yml
+            .yarn/install-state.gz
+            **/.pnp.cjs
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
 
       - name: Install JS dependencies
-        run: corepack yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
