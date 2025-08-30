@@ -8,16 +8,17 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
-import {useProduct, useDeleteProduct} from '../../../hooks/useProducts';
-import {useThemeStore} from '../../../stores/themeStore';
-import {createStyles} from './styles';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { useProduct, useDeleteProduct } from '../../../hooks/useProducts';
+import { useThemeStore } from '../../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
+import { createStyles } from './styles';
 
 type ProductDetailNavigationProp = StackNavigationProp<any, 'ProductDetail'>;
 type ProductDetailRouteProp = RouteProp<
-  {ProductDetail: {productId: string}},
+  { ProductDetail: { productId: string } },
   'ProductDetail'
 >;
 
@@ -30,9 +31,10 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
   navigation,
   route,
 }) => {
-  const {productId} = route.params;
-  const {theme} = useThemeStore();
-  const {data: product, isLoading, error} = useProduct(productId);
+  const { productId } = route.params;
+  const { theme } = useThemeStore();
+  const { userProfile } = useUserStore();
+  const { data: product, isLoading, error } = useProduct(productId);
   const deleteProductMutation = useDeleteProduct();
 
   const styles = createStyles(theme);
@@ -50,7 +52,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
   };
 
   const handleEdit = () => {
-    navigation.navigate('EditProduct', {productId});
+    navigation.navigate('EditProduct', { productId });
   };
 
   const handleDelete = () => {
@@ -58,13 +60,13 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
       'Delete Product',
       'Are you sure you want to delete this product? This action cannot be undone.',
       [
-        {text: 'Cancel', style: 'cancel'},
+        { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete',
           style: 'destructive',
           onPress: confirmDelete,
         },
-      ]
+      ],
     );
   };
 
@@ -72,7 +74,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
     try {
       await deleteProductMutation.mutateAsync(productId);
       Alert.alert('Success', 'Product deleted successfully', [
-        {text: 'OK', onPress: () => navigation.goBack()},
+        { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (deleteError) {
       Alert.alert('Error', 'Failed to delete product. Please try again.');
@@ -80,8 +82,10 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
   };
 
   const handleOrder = () => {
-    navigation.navigate('CreateOrder', {productId});
+    navigation.navigate('CreateOrder', { productId });
   };
+
+  const isProductOwner = userProfile?.id === product?.createdBy;
 
   if (isLoading) {
     return (
@@ -101,7 +105,8 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
           <Text style={styles.errorText}>Failed to load product</Text>
           <TouchableOpacity
             style={styles.retryButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.retryButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -111,16 +116,20 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.imageContainer}>
           <Image
-            source={{uri: product.images[0]}}
+            source={{ uri: product.images[0] }}
             style={styles.mainImage}
             resizeMode="cover"
           />
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.backButtonText}>← Back</Text>
           </TouchableOpacity>
           {product.images.length > 1 && (
@@ -128,11 +137,12 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
               horizontal
               showsHorizontalScrollIndicator={false}
               style={styles.thumbnailContainer}
-              contentContainerStyle={styles.thumbnailContent}>
+              contentContainerStyle={styles.thumbnailContent}
+            >
               {product.images.map((image, index) => (
                 <Image
                   key={index}
-                  source={{uri: image}}
+                  source={{ uri: image }}
                   style={styles.thumbnail}
                   resizeMode="cover"
                 />
@@ -155,9 +165,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
               {formatRating(product.rating, product.reviews)}
             </Text>
             <Text style={styles.stock}>
-              {product.stock > 0
-                ? `${product.stock} in stock`
-                : 'Out of stock'}
+              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
             </Text>
           </View>
 
@@ -187,31 +195,42 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
           </View>
 
           <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={[
-                styles.orderButton,
-                product.stock === 0 && styles.orderButtonDisabled,
-              ]}
-              onPress={handleOrder}
-              disabled={product.stock === 0}>
-              <Text style={styles.orderButtonText}>
-                {product.stock > 0 ? 'Order Now' : 'Out of Stock'}
-              </Text>
-            </TouchableOpacity>
-
-            <View style={styles.productActions}>
-              <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-                <Text style={styles.editButtonText}>Edit</Text>
-              </TouchableOpacity>
+            {isProductOwner ? (
+              // Product Owner Actions
+              <View style={styles.productActions}>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={handleEdit}
+                >
+                  <Text style={styles.editButtonText}>Edit Product</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={handleDelete}
+                  disabled={deleteProductMutation.isPending}
+                >
+                  <Text style={styles.deleteButtonText}>
+                    {deleteProductMutation.isPending
+                      ? 'Deleting...'
+                      : 'Delete Product'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              // Non-Owner Actions
               <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={handleDelete}
-                disabled={deleteProductMutation.isPending}>
-                <Text style={styles.deleteButtonText}>
-                  {deleteProductMutation.isPending ? 'Deleting...' : 'Delete'}
+                style={[
+                  styles.orderButton,
+                  product.stock === 0 && styles.orderButtonDisabled,
+                ]}
+                onPress={handleOrder}
+                disabled={product.stock === 0}
+              >
+                <Text style={styles.orderButtonText}>
+                  {product.stock > 0 ? 'Order Now' : 'Out of Stock'}
                 </Text>
               </TouchableOpacity>
-            </View>
+            )}
           </View>
         </View>
       </ScrollView>

@@ -179,6 +179,7 @@ export const createStyles = (theme: Theme) =>
     productActions: {
       flexDirection: 'row',
       gap: 12,
+      width: '100%',
     },
     editButton: {
       flex: 1,

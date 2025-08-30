@@ -114,7 +114,10 @@ export class ProductApi {
     return products.find(p => p.id === id) || null;
   }
 
-  static async createProduct(data: CreateProductRequest): Promise<Product> {
+  static async createProduct(
+    data: CreateProductRequest,
+    userId: string,
+  ): Promise<Product> {
     await delay(1000);
 
     const products = await this.getStoredProducts();
@@ -124,7 +127,7 @@ export class ProductApi {
       id: Date.now().toString(),
       rating: 0,
       reviews: 0,
-      createdBy: 'current_user', // In real app, get from auth
+      createdBy: userId,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

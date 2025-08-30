@@ -22,6 +22,7 @@ import {
 } from 'react-native-image-picker';
 import { useCreateProduct } from '../../../hooks/useProducts';
 import { useThemeStore } from '../../../stores/themeStore';
+import { useUserStore } from '../../../stores/userStore';
 import {
   CreateProductRequest,
   PRODUCT_CATEGORIES,
@@ -45,6 +46,7 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
   navigation,
 }) => {
   const { theme } = useThemeStore();
+  const { userProfile } = useUserStore();
   const createProductMutation = useCreateProduct();
   const [selectedImages, setSelectedImages] = useState<SelectedImage[]>([]);
 
@@ -73,13 +75,22 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
         return;
       }
 
+      if (!userProfile?.id) {
+        Alert.alert('Error', 'User not authenticated');
+        navigation.navigate('Login');
+        return;
+      }
+
       const imageUris = selectedImages.map(img => img.uri);
       const productData = {
         ...data,
         images: imageUris,
       };
 
-      await createProductMutation.mutateAsync(productData);
+      await createProductMutation.mutateAsync({
+        data: productData,
+        userId: userProfile.id,
+      });
 
       Alert.alert('Success', 'Product created successfully!', [
         { text: 'OK', onPress: () => navigation.goBack() },
@@ -131,21 +142,20 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
     });
   };
 
-  const openCamera = () => {
+  const openCamera = async () => {
     const options = {
       mediaType: 'photo' as MediaType,
       includeBase64: false,
       maxHeight: 2000,
       maxWidth: 2000,
     };
-
-    launchCamera(options, (response: ImagePickerResponse) => {
-      if (response.didCancel || response.errorMessage) {
+    try {
+      const result = await launchCamera(options);
+      if (result.didCancel || result.errorMessage) {
         return;
       }
-
-      if (response.assets && response.assets[0]) {
-        const asset = response.assets[0];
+      if (result.assets && result.assets[0]) {
+        const asset = result.assets[0];
         const newImage: SelectedImage = {
           uri: asset.uri!,
           fileName: asset.fileName,
@@ -154,7 +164,10 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
         };
         setSelectedImages(prev => [...prev, newImage]);
       }
-    });
+    } catch (error) {
+      console.log('Camera launch error:', error);
+      return;
+    }
   };
 
   const removeImage = (index: number) => {
@@ -343,6 +356,7 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
             {selectedImages.length > 0 && (
               <View style={styles.imagePreviewContainer}>
                 <FlatList
+                  contentContainerStyle={{ gap: 12 }}
                   horizontal={true}
                   data={selectedImages}
                   keyExtractor={(item, index) => `image-${index}`}

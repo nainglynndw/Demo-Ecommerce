@@ -1,6 +1,7 @@
-import {StyleSheet} from 'react-native';
-import {Theme} from '../../../types/theme';
+import { StyleSheet, Dimensions } from 'react-native';
+import { Theme } from '../../../types/theme';
 
+const { width } = Dimensions.get('window');
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
@@ -85,8 +86,7 @@ export const createStyles = (theme: Theme) =>
       marginTop: 12,
     },
     imagePreviewItem: {
-      flex: 0.48,
-      margin: '1%',
+      width: width * 0.7,
       backgroundColor: theme.colors.surface,
       borderRadius: 8,
       overflow: 'hidden',
@@ -95,7 +95,7 @@ export const createStyles = (theme: Theme) =>
     },
     imagePreview: {
       width: '100%',
-      height: 120,
+      height: 160,
     },
     removeImageButton: {
       position: 'absolute',
