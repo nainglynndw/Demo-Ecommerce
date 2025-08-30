@@ -18,8 +18,11 @@ jobs:
           node-version: '20'
           cache: 'yarn'
 
+      - name: Enable Corepack
+        run: corepack enable && corepack prepare yarn@3.6.4 --activate
+
       - name: Install JS dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
