@@ -11,29 +11,13 @@ export const createStyles = (theme: Theme) =>
     scrollView: {
       flex: 1,
     },
-    headerContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
-    },
-    backButton: {
-      marginRight: 16,
-    },
-    backButtonText: {
-      fontSize: 16,
-      color: theme.colors.primary,
-      fontWeight: '600',
-    },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.text,
     },
     form: {
-      padding: 20,
+      paddingHorizontal: 20,
     },
     inputGroup: {
       marginBottom: 20,

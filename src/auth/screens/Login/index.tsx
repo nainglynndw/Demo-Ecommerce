@@ -1,13 +1,14 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import { View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { LoginData } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
 import { useUserStore } from '../../../stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/AuthNavigator';
-import { createStyles } from './styles';
+import { Header, FormField, Button, Footer } from '../../components';
+import { styles } from './styles';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -18,52 +19,55 @@ interface LoginScreenProps {
   navigation: LoginScreenNavigationProp;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const { theme } = useThemeStore();
-  const { setAuthStatus } = useUserStore();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<LoginData>({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
+export const LoginScreen: React.FC<LoginScreenProps> = memo(
+  ({ navigation }) => {
+    const { theme } = useThemeStore();
+    const { setAuthStatus } = useUserStore();
+    const {
+      control,
+      handleSubmit,
+      formState: { errors, isValid },
+    } = useForm<LoginData>({
+      defaultValues: {
+        email: '',
+        password: '',
+      },
+    });
 
-  const onSubmit = async (data: LoginData) => {
-    // Mock login logic - will be replaced with actual auth service
-    if (data.email === 'demo@test.com' && data.password === 'password') {
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: async () => {
-            await setAuthStatus({isAuthenticated: true});
-          },
-        },
-      ]);
-    } else {
-      Alert.alert('Error', 'Invalid credentials');
-    }
-  };
+    const onSubmit = useCallback(
+      async (data: LoginData) => {
+        if (data.email === 'demo@test.com' && data.password === 'password') {
+          Alert.alert('Success', 'Login successful!', [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await setAuthStatus({ isAuthenticated: true });
+              },
+            },
+          ]);
+        } else {
+          Alert.alert('Error', 'Invalid credentials');
+        }
+      },
+      [setAuthStatus],
+    );
+    const handleSignUpPress = useCallback(() => {
+      navigation.navigate('SignUp');
+    }, [navigation]);
 
-  const styles = createStyles(theme);
+    const currentStyles = styles(theme);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to your account</Text>
-        </View>
+    return (
+      <SafeAreaView style={currentStyles.container}>
+        <View style={currentStyles.content}>
+          <Header title="Welcome Back" subtitle="Sign in to your account" />
 
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <Controller
+          <View style={currentStyles.form}>
+            <FormField
               control={control}
               name="email"
+              label="Email"
+              placeholder="Enter your email"
               rules={{
                 required: 'Email is required',
                 pattern: {
@@ -71,29 +75,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                   message: 'Please enter a valid email',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.email && styles.inputError]}
-                  placeholder="Enter your email"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              )}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email.message}</Text>
-            )}
-          </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
-            <Controller
+            <FormField
               control={control}
               name="password"
+              label="Password"
+              placeholder="Enter your password"
               rules={{
                 required: 'Password is required',
                 minLength: {
@@ -101,39 +92,24 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                   message: 'Password must be at least 6 characters',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.password && styles.inputError]}
-                  placeholder="Enter your password"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry
-                />
-              )}
+              error={errors.password}
+              secureTextEntry
             />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
-          </View>
 
-          <TouchableOpacity
-            style={[styles.button, !isValid && styles.buttonDisabled]}
-            onPress={handleSubmit(onSubmit)}
-            disabled={!isValid}
-          >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              disabled={!isValid}
+              title="Sign In"
+            />
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-              <Text style={styles.link}>Sign Up</Text>
-            </TouchableOpacity>
+            <Footer
+              text="Don't have an account?"
+              linkText="Sign Up"
+              onLinkPress={handleSignUpPress}
+            />
           </View>
         </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+      </SafeAreaView>
+    );
+  },
+);

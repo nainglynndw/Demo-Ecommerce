@@ -18,13 +18,7 @@ interface ProductListHeaderProps {
 }
 
 export const ProductListHeader = memo<ProductListHeaderProps>(
-  ({
-    styles,
-    theme,
-    onSearch,
-    onCategoryFilter,
-    onCreateProduct,
-  }) => {
+  ({ styles, theme, onSearch, onCategoryFilter, onCreateProduct }) => {
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('');
 
@@ -37,17 +31,23 @@ export const ProductListHeader = memo<ProductListHeaderProps>(
       onSearch('');
     }, [onSearch]);
 
-    const handleCategoryFilter = useCallback((category: string) => {
-      const newCategory = selectedCategory === category ? '' : category;
-      setSelectedCategory(newCategory);
-      onCategoryFilter(newCategory);
-    }, [selectedCategory, onCategoryFilter]);
+    const handleCategoryFilter = useCallback(
+      (category: string) => {
+        const newCategory = selectedCategory === category ? '' : category;
+        setSelectedCategory(newCategory);
+        onCategoryFilter(newCategory);
+      },
+      [selectedCategory, onCategoryFilter],
+    );
 
     return (
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Products</Text>
-          <TouchableOpacity style={styles.createButton} onPress={onCreateProduct}>
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={onCreateProduct}
+          >
             <Text style={styles.createButtonText}>+ Create</Text>
           </TouchableOpacity>
         </View>
@@ -95,7 +95,8 @@ export const ProductListHeader = memo<ProductListHeaderProps>(
                 <Text
                   style={[
                     styles.categoryChipText,
-                    selectedCategory === item && styles.categoryChipTextSelected,
+                    selectedCategory === item &&
+                      styles.categoryChipTextSelected,
                   ]}
                 >
                   {item}

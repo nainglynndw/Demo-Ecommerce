@@ -182,15 +182,6 @@ export const CreateProductScreen: React.FC<CreateProductScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Create Product</Text>
-      </View>
       <ScrollView
         nestedScrollEnabled
         style={styles.scrollView}

@@ -1,12 +1,13 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import { View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { SignupData } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/AuthNavigator';
-import { createStyles } from './styles';
+import { Header, FormField, Button, Footer } from '../../components';
+import { styles } from './styles';
 
 type SignUpScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -17,49 +18,54 @@ interface SignUpScreenProps {
   navigation: SignUpScreenNavigationProp;
 }
 
-export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
-  const { theme } = useThemeStore();
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors, isValid },
-  } = useForm<SignupData & { confirmPassword: string }>({
-    defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  const password = watch('password');
-
-  const onSubmit = (_data: SignupData & { confirmPassword: string }) => {
-    // Mock signup logic - will be replaced with actual auth service
-    Alert.alert('Success', 'Account created successfully!', [
-      {
-        text: 'OK',
-        onPress: () => navigation.navigate('OnboardingStep1'),
+export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
+  ({ navigation }) => {
+    const { theme } = useThemeStore();
+    const {
+      control,
+      handleSubmit,
+      watch,
+      formState: { errors, isValid },
+    } = useForm<SignupData & { confirmPassword: string }>({
+      defaultValues: {
+        email: '',
+        password: '',
+        confirmPassword: '',
       },
-    ]);
-  };
+    });
 
-  const styles = createStyles(theme);
+    const password = watch('password');
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
-        </View>
+    const onSubmit = useCallback(
+      (_data: SignupData & { confirmPassword: string }) => {
+        // Mock signup logic - will be replaced with actual auth service
+        Alert.alert('Success', 'Account created successfully!', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('OnboardingStep1'),
+          },
+        ]);
+      },
+      [navigation],
+    );
 
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <Controller
+    const handleSignInPress = useCallback(() => {
+      navigation.navigate('Login');
+    }, [navigation]);
+
+    const currentStyles = styles(theme);
+
+    return (
+      <SafeAreaView style={currentStyles.container}>
+        <View style={currentStyles.content}>
+          <Header title="Create Account" subtitle="Sign up to get started" />
+
+          <View style={currentStyles.form}>
+            <FormField
               control={control}
               name="email"
+              label="Email"
+              placeholder="Enter your email"
               rules={{
                 required: 'Email is required',
                 pattern: {
@@ -67,29 +73,16 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                   message: 'Please enter a valid email',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.email && styles.inputError]}
-                  placeholder="Enter your email"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              )}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email.message}</Text>
-            )}
-          </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
-            <Controller
+            <FormField
               control={control}
               name="password"
+              label="Password"
+              placeholder="Enter your password"
               rules={{
                 required: 'Password is required',
                 minLength: {
@@ -97,71 +90,38 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                   message: 'Password must be at least 6 characters',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[styles.input, errors.password && styles.inputError]}
-                  placeholder="Enter your password"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry
-                />
-              )}
+              error={errors.password}
+              secureTextEntry
             />
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
-          </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <Controller
+            <FormField
               control={control}
               name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Confirm your password"
               rules={{
                 required: 'Please confirm your password',
-                validate: value =>
+                validate: (value: string) =>
                   value === password || 'Passwords do not match',
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.confirmPassword && styles.inputError,
-                  ]}
-                  placeholder="Confirm your password"
-                  placeholderTextColor={theme.colors.textSecondary}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry
-                />
-              )}
+              error={errors.confirmPassword}
+              secureTextEntry
             />
-            {errors.confirmPassword && (
-              <Text style={styles.errorText}>
-                {errors.confirmPassword.message}
-              </Text>
-            )}
-          </View>
 
-          <TouchableOpacity
-            style={[styles.button, !isValid && styles.buttonDisabled]}
-            onPress={handleSubmit(onSubmit)}
-            disabled={!isValid}
-          >
-            <Text style={styles.buttonText}>Create Account</Text>
-          </TouchableOpacity>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              disabled={!isValid}
+              title="Create Account"
+            />
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.link}>Sign In</Text>
-            </TouchableOpacity>
+            <Footer
+              text="Already have an account?"
+              linkText="Sign In"
+              onLinkPress={handleSignInPress}
+            />
           </View>
         </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+      </SafeAreaView>
+    );
+  },
+);

@@ -1,21 +1,19 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import {Product} from '../../types/product';
-import {useThemeStore} from '../../stores/themeStore';
-import {createStyles} from './ProductCard.styles';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { Product } from '../../types/product';
+import { useThemeStore } from '../../stores/themeStore';
+import { createStyles } from './ProductCard.styles';
 
 interface ProductCardProps {
   product: Product;
   onPress: () => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({product, onPress}) => {
-  const {theme} = useThemeStore();
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onPress,
+}) => {
+  const { theme } = useThemeStore();
   const styles = createStyles(theme);
 
   const formatPrice = (price: number) => {
@@ -29,7 +27,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({product, onPress}) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image
-        source={{uri: product.images[0]}}
+        source={{ uri: product.images[0] }}
         style={styles.image}
         resizeMode="cover"
       />
