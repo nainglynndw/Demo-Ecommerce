@@ -1,97 +1,156 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Demo E-commerce React Native App
 
-# Getting Started
+A modern React Native e-commerce application built with TypeScript, featuring product management, user authentication, and order processing.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Screenshots
 
-## Step 1: Start Metro
+<div align="center">
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 🔐 Authentication Flow
+| Onboarding 1 | Onboarding 2 | Login | Register |
+|:---:|:---:|:---:|:---:|
+| <img src="doc/screenshots/Onboarding 1 Screen.png" width="180"> | <img src="doc/screenshots/Onboarding 2 Screen.png" width="180"> | <img src="doc/screenshots/Login Screen.png" width="180"> | <img src="doc/screenshots/Register Screen.png" width="180"> |
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 🛍️ E-commerce Features
+| Product List | Product Detail | Create Product | Edit Product |
+|:---:|:---:|:---:|:---:|
+| <img src="doc/screenshots/Home:Product List Screen.png" width="180"> | <img src="doc/screenshots/Product Detail Screen.png" width="180"> | <img src="doc/screenshots/Create Product Screen.png" width="180"> | <img src="doc/screenshots/Edit Product Screen.png" width="180"> |
 
-```sh
-# Using npm
-npm start
+### 👤 User Profile
+| User Profile | Edit Profile |
+|:---:|:---:|
+| <img src="doc/screenshots/User Profile Screen.png" width="200"> | <img src="doc/screenshots/Edit User Profile Screen.png" width="200"> |
 
-# OR using Yarn
+</div>
+
+## Prerequisites
+
+- **Node.js** >= 18.0.0
+- **React Native CLI** >= 13.0.0
+- **Android Studio** (for Android development)
+- **Xcode** (for iOS development - macOS only)
+- **Yarn** 3.6.4 (recommended)
+
+## Environment Setup
+
+This project uses **Yarn 3.6.4**. Make sure you have completed the [React Native Environment Setup](https://reactnative.dev/docs/set-up-your-environment) guide.
+
+### Installing Dependencies
+
+```bash
+# Install dependencies with Yarn 3.6.4 (recommended)
+yarn install
+
+# For iOS, install CocoaPods dependencies
+cd ios && bundle install && bundle exec pod install && cd ..
+```
+
+### Different Yarn Versions
+
+If you're using a different Yarn version:
+
+**Yarn 1.x (Classic):**
+
+```bash
+# Remove Yarn 3 specific files
+rm -rf .yarn .yarnrc.yml
+
+# Remove packageManager field from package.json
+# Edit package.json and delete: "packageManager": "yarn@3.6.4",
+
+# Install with Yarn 1.x
+yarn install
+```
+
+**Yarn 2.x/4.x:**
+
+```bash
+# Remove or update packageManager field in package.json
+# Either delete "packageManager": "yarn@3.6.4", or update version
+
+# Update Yarn version if needed
+yarn set version stable
+
+# Install dependencies
+yarn install
+```
+
+## Running the Application
+
+### Start Metro Bundler
+
+```bash
 yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
 ### Android
 
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
+```bash
+# Start Android emulator or connect physical device
 yarn android
 ```
 
-### iOS
+**Requirements:**
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+- Android Studio with Android SDK
+- Android emulator running or physical device connected
+- USB debugging enabled (for physical devices)
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### iOS (macOS only)
 
-```sh
-bundle install
-```
+```bash
+# Install iOS dependencies (first time only)
+cd ios && bundle exec pod install && cd ..
 
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
+# Run on iOS Simulator
 yarn ios
+# or Open XCode and run (Prefer)
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+**Requirements:**
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+- Xcode installed from Mac App Store
+- iOS Simulator or physical iOS device
+- Apple Developer account (for physical devices)
 
-## Step 3: Modify your app
+## Development Scripts
 
-Now that you have successfully run the app, let's make changes!
+```bash
+# Start Metro bundler
+yarn start
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+# Run on Android
+yarn android
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+# Run on iOS
+yarn ios
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+# Run tests
+yarn test
 
-## Congratulations! :tada:
+# Type checking
+yarn tsc
 
-You've successfully run and modified your React Native App. :partying_face:
+# Linting
+yarn lint
 
-### Now what?
+# Reset Metro cache
+yarn start --reset-cache
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Project Structure
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```
+src/
+├── components/        # Reusable UI components
+├── constants/         # Centralized design constants
+├── features/          # Feature-based modules
+│   ├── auth/         # Authentication
+│   ├── orders/       # Order management
+│   ├── products/     # Product management
+│   └── profile/      # User profile
+├── navigation/       # Navigation configuration
+├── services/         # API services
+├── stores/           # State management
+└── utils/            # Utility functions
+```
