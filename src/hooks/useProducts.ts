@@ -1,26 +1,39 @@
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {ProductApi} from '../services/productApi';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
+import { ProductApi } from '../services/productApi';
 import {
   CreateProductRequest,
   UpdateProductRequest,
   ProductListParams,
 } from '../types/product';
 
-// Query keys
 export const productKeys = {
   all: ['products'] as const,
   lists: () => [...productKeys.all, 'list'] as const,
-  list: (params: ProductListParams) => [...productKeys.lists(), params] as const,
+  list: (params: ProductListParams) =>
+    [...productKeys.lists(), params] as const,
   details: () => [...productKeys.all, 'detail'] as const,
   detail: (id: string) => [...productKeys.details(), id] as const,
 };
 
-// Get products list with filters/pagination
-export const useProducts = (params: ProductListParams = {}) => {
-  return useQuery({
+// Get products list with infinite pagination
+export const useProducts = (params: Omit<ProductListParams, 'page'> = {}) => {
+  return useInfiniteQuery({
     queryKey: productKeys.list(params),
-    queryFn: () => ProductApi.getProducts(params),
-    placeholderData: (previousData) => previousData,
+    queryFn: ({ pageParam = 1 }) =>
+      ProductApi.getProducts({ ...params, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.products.length === (params.limit || 10)) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    placeholderData: previousData => previousData,
   });
 };
 
@@ -38,11 +51,15 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({data, userEmail}: {data: CreateProductRequest; userEmail: string}) =>
-      ProductApi.createProduct(data, userEmail),
+    mutationFn: ({
+      data,
+      userEmail,
+    }: {
+      data: CreateProductRequest;
+      userEmail: string;
+    }) => ProductApi.createProduct(data, userEmail),
     onSuccess: () => {
-      // Invalidate and refetch products list
-      queryClient.invalidateQueries({queryKey: productKeys.lists()});
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 };
@@ -53,14 +70,12 @@ export const useUpdateProduct = () => {
 
   return useMutation({
     mutationFn: (data: UpdateProductRequest) => ProductApi.updateProduct(data),
-    onSuccess: (updatedProduct) => {
-      // Update the product in cache
+    onSuccess: updatedProduct => {
       queryClient.setQueryData(
         productKeys.detail(updatedProduct.id),
-        updatedProduct
+        updatedProduct,
       );
-      // Invalidate products list to reflect changes
-      queryClient.invalidateQueries({queryKey: productKeys.lists()});
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 };
@@ -72,10 +87,8 @@ export const useDeleteProduct = () => {
   return useMutation({
     mutationFn: (id: string) => ProductApi.deleteProduct(id),
     onSuccess: (_data, deletedId) => {
-      // Remove from cache
-      queryClient.removeQueries({queryKey: productKeys.detail(deletedId)});
-      // Invalidate products list
-      queryClient.invalidateQueries({queryKey: productKeys.lists()});
+      queryClient.removeQueries({ queryKey: productKeys.detail(deletedId) });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 };

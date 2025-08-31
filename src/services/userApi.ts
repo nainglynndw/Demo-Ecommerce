@@ -4,6 +4,7 @@ import {
   OnboardingStep1Data,
   OnboardingStep2Data,
 } from '../auth/types';
+import { ApiErrorHandler } from './apiErrorHandler';
 
 const STORAGE_KEYS = {
   USER_PROFILE: 'user_profile',
@@ -30,107 +31,117 @@ const delay = (ms: number) =>
 export class UserApi {
   // User Profile Management
   static async getUserProfile(): Promise<Partial<UserProfile> | null> {
-    await delay(200);
-    
-    try {
-      const profileData = await AsyncStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-      return profileData ? JSON.parse(profileData) : null;
-    } catch (error) {
-      console.error('Error getting user profile:', error);
-      return null;
-    }
+    return ApiErrorHandler.intercept('/user/profile', async () => {
+      await delay(200);
+      
+      try {
+        const profileData = await AsyncStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+        return profileData ? JSON.parse(profileData) : null;
+      } catch (error) {
+        console.error('Error getting user profile:', error);
+        return null;
+      }
+    });
   }
 
   static async saveUserProfile(profile: Partial<UserProfile>): Promise<void> {
-    await delay(300);
-    
-    try {
-      const existingProfile = await this.getUserProfile();
-      const updatedProfile = {
-        ...existingProfile,
-        ...profile,
-        // Ensure we keep the onboarding status structure
-        onboardingCompleted: {
-          step1:
-            profile.name && profile.phone
+    return ApiErrorHandler.intercept('/user/profile', async () => {
+      await delay(300);
+      
+      try {
+        const existingProfile = await this.getUserProfile();
+        const updatedProfile = {
+          ...existingProfile,
+          ...profile,
+          // Ensure we keep the onboarding status structure
+          onboardingCompleted: {
+            step1:
+              profile.name && profile.phone
+                ? true
+                : existingProfile?.onboardingCompleted?.step1 || false,
+            step2: profile.address
               ? true
-              : existingProfile?.onboardingCompleted?.step1 || false,
-          step2: profile.address
-            ? true
-            : existingProfile?.onboardingCompleted?.step2 || false,
-        },
-      };
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.USER_PROFILE,
-        JSON.stringify(updatedProfile),
-      );
-    } catch (error) {
-      console.error('Error saving user profile:', error);
-      throw error;
-    }
+              : existingProfile?.onboardingCompleted?.step2 || false,
+          },
+        };
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.USER_PROFILE,
+          JSON.stringify(updatedProfile),
+        );
+      } catch (error) {
+        console.error('Error saving user profile:', error);
+        throw error;
+      }
+    });
   }
 
   static async updateUserProfile(updates: Partial<UserProfile>): Promise<void> {
-    await delay(250);
-    
-    try {
-      const existingProfile = await this.getUserProfile();
-      const updatedProfile = {
-        ...existingProfile,
-        ...updates,
-      };
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.USER_PROFILE,
-        JSON.stringify(updatedProfile),
-      );
-    } catch (error) {
-      console.error('Error updating user profile:', error);
-      throw error;
-    }
+    return ApiErrorHandler.intercept('/user/profile', async () => {
+      await delay(250);
+      
+      try {
+        const existingProfile = await this.getUserProfile();
+        const updatedProfile = {
+          ...existingProfile,
+          ...updates,
+        };
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.USER_PROFILE,
+          JSON.stringify(updatedProfile),
+        );
+      } catch (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+      }
+    });
   }
 
   // Onboarding Management
   static async saveStep1Data(data: OnboardingStep1Data): Promise<void> {
-    await delay(400);
-    
-    try {
-      // Save user profile data
-      await this.saveUserProfile({
-        name: data.name,
-        phone: data.phone,
-        preferences: data.preferences,
-      });
+    return ApiErrorHandler.intercept('/user/onboarding/step1', async () => {
+      await delay(400);
+      
+      try {
+        // Save user profile data
+        await this.saveUserProfile({
+          name: data.name,
+          phone: data.phone,
+          preferences: data.preferences,
+        });
 
-      // Update onboarding status
-      await this.updateOnboardingStatus({
-        step1Completed: true,
-        lastCompletedStep: 'step1',
-      });
-    } catch (error) {
-      console.error('Error saving step 1 data:', error);
-      throw error;
-    }
+        // Update onboarding status
+        await this.updateOnboardingStatus({
+          step1Completed: true,
+          lastCompletedStep: 'step1',
+        });
+      } catch (error) {
+        console.error('Error saving step 1 data:', error);
+        throw error;
+      }
+    });
   }
 
   static async saveStep2Data(data: OnboardingStep2Data): Promise<void> {
-    await delay(400);
-    
-    try {
-      // Save user profile data
-      await this.saveUserProfile({
-        dateOfBirth: data.dateOfBirth,
-        address: data.address,
-      });
+    return ApiErrorHandler.intercept('/user/onboarding/step2', async () => {
+      await delay(400);
+      
+      try {
+        // Save user profile data
+        await this.saveUserProfile({
+          dateOfBirth: data.dateOfBirth,
+          address: data.address,
+        });
 
-      // Update onboarding status
-      await this.updateOnboardingStatus({
-        step2Completed: true,
-        lastCompletedStep: 'step2',
-      });
-    } catch (error) {
-      console.error('Error saving step 2 data:', error);
-      throw error;
-    }
+        // Update onboarding status
+        await this.updateOnboardingStatus({
+          step2Completed: true,
+          lastCompletedStep: 'step2',
+        });
+      } catch (error) {
+        console.error('Error saving step 2 data:', error);
+        throw error;
+      }
+    });
   }
 
   static async getOnboardingStatus(): Promise<OnboardingStatus> {

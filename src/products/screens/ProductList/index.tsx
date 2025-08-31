@@ -26,21 +26,30 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
   navigation,
 }) => {
   const { theme } = useThemeStore();
-  const [params, setParams] = useState<ProductListParams>({
-    page: 1,
+  const [params, setParams] = useState<Omit<ProductListParams, 'page'>>({
     limit: 10,
     search: '',
     category: undefined,
   });
 
-  const { data, isLoading, error, refetch, isFetching } = useProducts(params);
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useProducts(params);
 
   const styles = createStyles(theme);
+
+  const allProducts = data?.pages.flatMap(page => page.products) ?? [];
 
   const handleSearch = useCallback((searchText: string) => {
     setParams(prev => ({
       ...prev,
-      page: 1,
       search: searchText,
     }));
   }, []);
@@ -48,10 +57,15 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
   const handleCategoryFilter = useCallback((category: string) => {
     setParams(prev => ({
       ...prev,
-      page: 1,
       category: category || undefined,
     }));
   }, []);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleProductPress = useCallback(
     (productId: string) => {
@@ -84,7 +98,7 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
 
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.errorHandlerContainer}>
         <ProductListHeader
           styles={styles}
           theme={theme}
@@ -100,7 +114,7 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={data?.products ?? []}
+        data={allProducts}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <ProductCard
@@ -126,10 +140,17 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
             tintColor={theme.colors.primary}
           />
         }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
           isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={theme.colors.primary} />
+            </View>
+          ) : isFetchingNextPage ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={theme.colors.primary} />
+              <Text style={styles.loadingMoreText}>Loading more...</Text>
             </View>
           ) : null
         }

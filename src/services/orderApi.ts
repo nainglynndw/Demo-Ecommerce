@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Order, CreateOrderRequest } from '../types/order';
+import { ApiErrorHandler } from './apiErrorHandler';
 
 const STORAGE_KEY = 'orders';
 
@@ -31,43 +32,49 @@ export class OrderApi {
     productPrice: number,
     userEmail: string,
   ): Promise<Order> {
-    await delay(800);
+    return ApiErrorHandler.intercept('/orders', async () => {
+      await delay(800);
 
-    const orders = await this.getStoredOrders();
+      const orders = await this.getStoredOrders();
 
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      productId: data.productId,
-      productName,
-      productPrice,
-      quantity: data.quantity,
-      totalAmount: productPrice * data.quantity,
-      customerEmail: userEmail,
-      customerName: data.customerName,
-      customerPhone: data.customerPhone,
-      shippingAddress: data.shippingAddress,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        productId: data.productId,
+        productName,
+        productPrice,
+        quantity: data.quantity,
+        totalAmount: productPrice * data.quantity,
+        customerEmail: userEmail,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        shippingAddress: data.shippingAddress,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    const updatedOrders = [newOrder, ...orders];
-    await this.saveOrders(updatedOrders);
+      const updatedOrders = [newOrder, ...orders];
+      await this.saveOrders(updatedOrders);
 
-    return newOrder;
+      return newOrder;
+    });
   }
 
   static async getOrdersByEmail(userEmail: string): Promise<Order[]> {
-    await delay(300);
+    return ApiErrorHandler.intercept(`/orders?customerEmail=${userEmail}`, async () => {
+      await delay(300);
 
-    const orders = await this.getStoredOrders();
-    return orders.filter(order => order.customerEmail === userEmail);
+      const orders = await this.getStoredOrders();
+      return orders.filter(order => order.customerEmail === userEmail);
+    });
   }
 
   static async getOrder(id: string): Promise<Order | null> {
-    await delay(200);
+    return ApiErrorHandler.intercept(`/orders/${id}`, async () => {
+      await delay(200);
 
-    const orders = await this.getStoredOrders();
-    return orders.find(order => order.id === id) || null;
+      const orders = await this.getStoredOrders();
+      return orders.find(order => order.id === id) || null;
+    });
   }
 }

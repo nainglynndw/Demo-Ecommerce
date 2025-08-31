@@ -7,6 +7,7 @@ import {
   ProductListParams,
 } from '../types/product';
 import { mockProducts } from './mockProducts';
+import { ApiErrorHandler } from './apiErrorHandler';
 
 const STORAGE_KEY = 'products';
 
@@ -40,131 +41,141 @@ export class ProductApi {
   static async getProducts(
     params: ProductListParams = {},
   ): Promise<ProductListResponse> {
-    await delay(300); // Simulate network delay
+    return ApiErrorHandler.intercept('/products', async () => {
+      await delay(300); // Simulate network delay
 
-    const {
-      page = 1,
-      limit = 10,
-      category,
-      minPrice,
-      maxPrice,
-      search,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-    } = params;
+      const {
+        page = 1,
+        limit = 10,
+        category,
+        minPrice,
+        maxPrice,
+        search,
+        sortBy = 'createdAt',
+        sortOrder = 'desc',
+      } = params;
 
-    let products = await this.getStoredProducts();
+      let products = await this.getStoredProducts();
 
-    // Apply filters
-    if (category) {
-      products = products.filter(p => p.category === category);
-    }
-
-    if (minPrice !== undefined) {
-      products = products.filter(p => p.price >= minPrice);
-    }
-
-    if (maxPrice !== undefined) {
-      products = products.filter(p => p.price <= maxPrice);
-    }
-
-    if (search) {
-      const searchLower = search.toLowerCase();
-      products = products.filter(
-        p =>
-          p.name.toLowerCase().includes(searchLower) ||
-          p.description.toLowerCase().includes(searchLower),
-      );
-    }
-
-    // Apply sorting
-    products.sort((a, b) => {
-      let aValue: any = a[sortBy];
-      let bValue: any = b[sortBy];
-
-      if (sortBy === 'price' || sortBy === 'rating') {
-        aValue = Number(aValue);
-        bValue = Number(bValue);
+      // Apply filters
+      if (category) {
+        products = products.filter(p => p.category === category);
       }
 
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
+      if (minPrice !== undefined) {
+        products = products.filter(p => p.price >= minPrice);
       }
-      return aValue < bValue ? 1 : -1;
+
+      if (maxPrice !== undefined) {
+        products = products.filter(p => p.price <= maxPrice);
+      }
+
+      if (search) {
+        const searchLower = search.toLowerCase();
+        products = products.filter(
+          p =>
+            p.name.toLowerCase().includes(searchLower) ||
+            p.description.toLowerCase().includes(searchLower),
+        );
+      }
+
+      // Apply sorting
+      products.sort((a, b) => {
+        let aValue: any = a[sortBy];
+        let bValue: any = b[sortBy];
+
+        if (sortBy === 'price' || sortBy === 'rating') {
+          aValue = Number(aValue);
+          bValue = Number(bValue);
+        }
+
+        if (sortOrder === 'asc') {
+          return aValue > bValue ? 1 : -1;
+        }
+        return aValue < bValue ? 1 : -1;
+      });
+
+      // Apply pagination
+      const total = products.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+
+      return {
+        products: paginatedProducts,
+        total,
+        page,
+        limit,
+      };
     });
-
-    // Apply pagination
-    const total = products.length;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedProducts = products.slice(startIndex, endIndex);
-
-    return {
-      products: paginatedProducts,
-      total,
-      page,
-      limit,
-    };
   }
 
   static async getProduct(id: string): Promise<Product | null> {
-    await delay(500);
+    return ApiErrorHandler.intercept(`/products/${id}`, async () => {
+      await delay(500);
 
-    const products = await this.getStoredProducts();
-    return products.find(p => p.id === id) || null;
+      const products = await this.getStoredProducts();
+      return products.find(p => p.id === id) || null;
+    });
   }
 
   static async createProduct(
     data: CreateProductRequest,
     userEmail: string,
   ): Promise<Product> {
-    await delay(1000);
+    return ApiErrorHandler.intercept('/products', async () => {
+      await delay(1000);
 
-    const products = await this.getStoredProducts();
+      const products = await this.getStoredProducts();
 
-    const newProduct: Product = {
-      ...data,
-      id: Date.now().toString(),
-      rating: 0,
-      reviews: 0,
-      createdBy: userEmail,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+      const newProduct: Product = {
+        ...data,
+        id: Date.now().toString(),
+        rating: 0,
+        reviews: 0,
+        createdBy: userEmail,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    const updatedProducts = [newProduct, ...products];
-    await this.saveProducts(updatedProducts);
+      const updatedProducts = [newProduct, ...products];
+      await this.saveProducts(updatedProducts);
 
-    return newProduct;
+      return newProduct;
+    });
   }
 
   static async updateProduct(data: UpdateProductRequest): Promise<Product> {
-    await delay(800);
+    return ApiErrorHandler.intercept(`/products/${data.id}`, async () => {
+      await delay(800);
 
-    const products = await this.getStoredProducts();
-    const index = products.findIndex(p => p.id === data.id);
+      const products = await this.getStoredProducts();
+      const index = products.findIndex(p => p.id === data.id);
 
-    if (index === -1) {
-      throw new Error('Product not found');
-    }
+      if (index === -1) {
+        throw new Error('Product not found');
+      }
 
-    const updatedProduct = {
-      ...products[index],
-      ...data,
-      updatedAt: new Date().toISOString(),
-    };
+      const updatedProduct = {
+        ...products[index],
+        ...data,
+        updatedAt: new Date().toISOString(),
+      };
 
-    products[index] = updatedProduct;
-    await this.saveProducts(products);
+      products[index] = updatedProduct;
+      await this.saveProducts(products);
 
-    return updatedProduct;
+      return updatedProduct;
+    });
   }
 
   static async deleteProduct(id: string): Promise<void> {
-    await delay(600);
+    return ApiErrorHandler.intercept(`/products/${id}`, async () => {
+      await delay(600);
 
-    const products = await this.getStoredProducts();
-    const filteredProducts = products.filter(p => p.id !== id);
-    await this.saveProducts(filteredProducts);
+      const products = await this.getStoredProducts();
+      const filteredProducts = products.filter(p => p.id !== id);
+      await this.saveProducts(filteredProducts);
+    });
   }
 }

@@ -1,11 +1,16 @@
-import {StyleSheet} from 'react-native';
-import {Theme} from '../../../types/theme';
+import { StyleSheet } from 'react-native';
+import { Theme } from '../../../types/theme';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
+    },
+    errorHandlerContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: 16,
     },
     listContent: {
       padding: 16,
@@ -169,5 +174,10 @@ export const createStyles = (theme: Theme) =>
     loadingContainer: {
       paddingVertical: 20,
       alignItems: 'center',
+    },
+    loadingMoreText: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      marginTop: 8,
     },
   });
