@@ -75,7 +75,7 @@ export class ApiErrorHandler {
 
   // Check if should trigger error
   private static shouldTriggerError(): string | null {
-    if (!this.enabled) return null;
+    if (!this.enabled) {return null;}
 
     const random = Math.random() * 100;
     let cumulative = 0;
@@ -91,9 +91,14 @@ export class ApiErrorHandler {
   }
 
   // Create simple API error object for testing
-  private static createSimulatedError(status: string, endpoint: string): ApiError {
+  private static createSimulatedError(
+    status: string,
+    endpoint: string,
+  ): ApiError {
     const statusCode = parseInt(status);
-    const error = new Error(`Simulated ${status} error for ${endpoint}`) as ApiError;
+    const error = new Error(
+      `Simulated ${status} error for ${endpoint}`,
+    ) as ApiError;
     error.status = statusCode;
     return error;
   }

@@ -379,7 +379,7 @@ export const updateProduct = (
   updates: Partial<Product>,
 ): Product | null => {
   const productIndex = mockProducts.findIndex(product => product.id === id);
-  if (productIndex === -1) return null;
+  if (productIndex === -1) {return null;}
 
   const updatedProduct: Product = {
     ...mockProducts[productIndex],
@@ -393,7 +393,7 @@ export const updateProduct = (
 
 export const deleteProduct = (id: string): boolean => {
   const productIndex = mockProducts.findIndex(product => product.id === id);
-  if (productIndex === -1) return false;
+  if (productIndex === -1) {return false;}
 
   mockProducts.splice(productIndex, 1);
   return true;

@@ -10,9 +10,16 @@ import { UpdateProductRequest } from '@app-types/product';
 import { MainStackParamList } from '@navigation/MainNavigator';
 import { createStyles } from './styles';
 import { useEditProductForm, useImagePicker } from './hooks';
-import { EditProductForm, ImagePickerSection, UpdateButton } from './components';
+import {
+  EditProductForm,
+  ImagePickerSection,
+  UpdateButton,
+} from './components';
 
-type EditProductNavigationProp = StackNavigationProp<MainStackParamList, 'EditProduct'>;
+type EditProductNavigationProp = StackNavigationProp<
+  MainStackParamList,
+  'EditProduct'
+>;
 type EditProductRouteProp = RouteProp<MainStackParamList, 'EditProduct'>;
 
 interface EditProductScreenProps {
@@ -37,8 +44,12 @@ export const EditProductScreen: React.FC<EditProductScreenProps> = ({
     setValue,
   } = useEditProductForm();
 
-  const { selectedImages, setSelectedImages, removeImage, showImagePickerOptions } =
-    useImagePicker();
+  const {
+    selectedImages,
+    setSelectedImages,
+    removeImage,
+    showImagePickerOptions,
+  } = useImagePicker();
 
   const styles = createStyles(theme);
 
@@ -65,7 +76,7 @@ export const EditProductScreen: React.FC<EditProductScreenProps> = ({
       Alert.alert(
         'Access Denied',
         'You can only edit products that you created.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
+        [{ text: 'OK', onPress: () => navigation.goBack() }],
       );
     }
   }, [product, navigation, isProductOwner]);
@@ -124,7 +135,9 @@ export const EditProductScreen: React.FC<EditProductScreenProps> = ({
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>You can only edit your own products</Text>
+          <Text style={styles.errorText}>
+            You can only edit your own products
+          </Text>
         </View>
       </SafeAreaView>
     );

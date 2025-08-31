@@ -93,7 +93,7 @@ export const useImagePicker = () => {
       }
     } catch (error) {
       console.log('Camera launch error:', error);
-      return;
+      
     }
   };
 

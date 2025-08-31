@@ -16,7 +16,9 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
   onRemoveImage,
 }) => {
   const formatFileSize = useCallback((bytes?: number) => {
-    if (!bytes) return '';
+    if (!bytes) {
+      return '';
+    }
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(1)} MB`;
   }, []);
@@ -37,7 +39,7 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
         <View style={styles.imagePreviewContainer}>
           <FlatList
             contentContainerStyle={{ gap: 12 }}
-            horizontal={true}
+            horizontal
             data={selectedImages}
             keyExtractor={(item, index) => `image-${index}`}
             renderItem={({ item, index }) => (
@@ -71,7 +73,7 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
         <View style={styles.emptyImageContainer}>
           <Text style={styles.emptyImageText}>No images selected</Text>
           <Text style={styles.emptyImageSubtext}>
-            Tap "Add Image" to select photos
+            Tap &quot;Add Image&quot; to select photos
           </Text>
         </View>
       )}

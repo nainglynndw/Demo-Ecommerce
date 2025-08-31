@@ -13,6 +13,7 @@ import { useThemeStore } from '@stores/themeStore';
 import { useOrders } from '@hooks/useOrders';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MainStackParamList } from '@navigation/MainNavigator';
+import { Theme } from '@app-types/theme';
 import InfoRow from './components/InfoRow';
 
 type ProfileScreenNavigationProp = StackNavigationProp<
@@ -42,7 +43,9 @@ export const Profile: React.FC<Props> = ({ navigation }) => {
   };
 
   const getInitials = (name?: string) => {
-    if (!name) return 'U';
+    if (!name) {
+      return 'U';
+    }
     return name
       .split(' ')
       .map(n => n[0])
@@ -151,17 +154,20 @@ export const Profile: React.FC<Props> = ({ navigation }) => {
               <InfoRow label="Loading..." value="" isLast />
             ) : orders.length > 0 ? (
               <>
-                {orders.slice(0, 3).map((order, index) => (
+                {orders.slice(0, RECENT_ORDERS_LIMIT).map((order, index) => (
                   <InfoRow
                     key={order.id}
-                    label={`#${order.id.slice(-6)}`}
+                    label={`#${order.id.slice(ORDER_ID_DISPLAY_LENGTH)}`}
                     value={`${order.productName} - $${order.totalAmount.toFixed(
                       2,
                     )}`}
-                    isLast={index === Math.min(orders.length - 1, 2)}
+                    isLast={
+                      index ===
+                      Math.min(orders.length - 1, RECENT_ORDERS_LIMIT - 1)
+                    }
                   />
                 ))}
-                {orders.length > 3 && (
+                {orders.length > RECENT_ORDERS_LIMIT && (
                   <TouchableOpacity style={styles.viewAllOrdersButton}>
                     <Text style={styles.viewAllOrdersText}>
                       View All Orders ({orders.length})
@@ -207,8 +213,12 @@ export const Profile: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const createStyles = (theme: any) =>
-  StyleSheet.create({
+const RECENT_ORDERS_LIMIT = 3;
+const ORDER_ID_DISPLAY_LENGTH = -6;
+const WHITE_COLOR = '#FFFFFF';
+
+const createStyles = (theme: Theme) => {
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
@@ -279,7 +289,7 @@ const createStyles = (theme: any) =>
     avatarText: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: 'white',
+      color: WHITE_COLOR,
     },
     profileInfo: {
       alignItems: 'center',
@@ -338,7 +348,7 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
     },
     logoutButtonText: {
-      color: 'white',
+      color: WHITE_COLOR,
       fontSize: 18,
       fontWeight: '600',
     },
@@ -346,3 +356,6 @@ const createStyles = (theme: any) =>
       height: 32,
     },
   });
+
+  return styles;
+};

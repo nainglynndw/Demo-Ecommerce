@@ -179,7 +179,9 @@ export const updateUser = (
   updates: Partial<MockUser>,
 ): MockUser | null => {
   const userIndex = mockUsers.findIndex(user => user.id === id);
-  if (userIndex === -1) return null;
+  if (userIndex === -1) {
+    return null;
+  }
 
   const updatedUser: MockUser = {
     ...mockUsers[userIndex],
@@ -193,7 +195,9 @@ export const updateUser = (
 
 export const deleteUser = (id: string): boolean => {
   const userIndex = mockUsers.findIndex(user => user.id === id);
-  if (userIndex === -1) return false;
+  if (userIndex === -1) {
+    return false;
+  }
 
   mockUsers.splice(userIndex, 1);
   return true;

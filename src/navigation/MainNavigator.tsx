@@ -107,8 +107,8 @@ export const MainNavigator: React.FC = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen 
-        name="EditProduct" 
+      <Stack.Screen
+        name="EditProduct"
         component={EditProductScreen}
         options={{
           headerShown: false,

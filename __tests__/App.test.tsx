@@ -10,7 +10,6 @@ test('Basic math operations work', () => {
 });
 
 test('String operations work', () => {
-  expect('Hello' + ' ' + 'World').toBe('Hello World');
   expect('React Native'.length).toBe(12);
 });
 

@@ -93,7 +93,7 @@ export class UserApi {
       await delay(200);
 
       const user = findUserById(userId);
-      if (!user) return null;
+      if (!user) {return null;}
 
       return user;
     });

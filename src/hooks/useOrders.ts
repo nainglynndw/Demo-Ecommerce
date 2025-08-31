@@ -43,7 +43,7 @@ export const useCreateOrder = () => {
       productPrice: number;
       userEmail: string;
     }) => OrderApi.createOrder(data, productName, productPrice, userEmail),
-    onSuccess: (newOrder) => {
+    onSuccess: newOrder => {
       // Invalidate orders for this user
       queryClient.invalidateQueries({
         queryKey: orderKeys.byEmail(newOrder.customerEmail),

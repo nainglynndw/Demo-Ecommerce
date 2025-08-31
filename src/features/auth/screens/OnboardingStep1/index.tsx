@@ -75,7 +75,7 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
             </View>
             <Text style={styles.progressText}>Step 1 of 2</Text>
           </View>
-          <Text style={styles.title}>Let's Get Started</Text>
+          <Text style={styles.title}>Let&apos;s Get Started</Text>
           <Text style={styles.subtitle}>Tell us about yourself</Text>
         </View>
 
