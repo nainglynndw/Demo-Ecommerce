@@ -1,8 +1,4 @@
-import {
-  formatPrice,
-  formatRating,
-  formatDate,
-} from '../../src/utils/formatting';
+import { formatPrice, formatRating, formatDate } from '@utils/formatting';
 
 describe('formatPrice', () => {
   it('should format positive numbers correctly', () => {

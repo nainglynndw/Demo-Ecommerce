@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
-import { showApiErrorAlert } from '../../src/utils/errorHandling';
-import { ApiError } from '../../src/services/apiErrorHandler';
+import { showApiErrorAlert } from '@utils/errorHandling';
+import { ApiError } from '@services/apiErrorHandler';
 
 jest.mock('react-native', () => ({
   Alert: {

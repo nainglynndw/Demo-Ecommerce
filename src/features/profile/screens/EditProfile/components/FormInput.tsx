@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { Theme } from '../../../../../types/theme';
+import { Theme } from '@app-types/theme';
 import { EditProfileFormData } from '../types';
 import { createFormInputStyles } from './FormInput.styles';
 

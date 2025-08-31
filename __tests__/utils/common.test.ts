@@ -1,4 +1,4 @@
-import { delay } from '../../src/utils/common';
+import { delay } from '@utils/common';
 
 describe('common utilities', () => {
   describe('delay', () => {

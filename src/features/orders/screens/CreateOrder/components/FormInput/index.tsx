@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { Theme } from '../../../../../types/theme';
-import { OrderFormData } from '../../../../../types/order';
+import { Theme } from '@app-types/theme';
+import { OrderFormData } from '@app-types/order';
 import { createStyles } from './styles';
 
 interface FormInputProps {

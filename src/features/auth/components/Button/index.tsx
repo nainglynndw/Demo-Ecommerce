@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import { useThemeStore } from '../../../../stores/themeStore';
+import { useThemeStore } from '@stores/themeStore';
 import { styles } from './styles';
 
 interface ButtonProps {

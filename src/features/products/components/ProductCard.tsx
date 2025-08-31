@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { Product } from '../../../types/product';
-import { useThemeStore } from '../../../stores/themeStore';
+import { Product } from '@app-types/product';
+import { useThemeStore } from '@stores/themeStore';
 import { createStyles } from './ProductCard.styles';
 
 interface ProductCardProps {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Control, FieldErrors } from 'react-hook-form';
-import { Theme } from '../../../../../types/theme';
-import { OrderFormData } from '../../../../../types/order';
+import { Theme } from '@app-types/theme';
+import { OrderFormData } from '@app-types/order';
 import { FormInput } from '../FormInput';
 import { createStyles } from './styles';
 import { formatCardNumber, formatExpiry } from '../../utils/formatting';

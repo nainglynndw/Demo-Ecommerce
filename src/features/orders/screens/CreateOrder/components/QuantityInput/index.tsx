@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { Product } from '../../../../../types/product';
-import { Theme } from '../../../../../types/theme';
-import { OrderFormData } from '../../../../../types/order';
+import { Product } from '@app-types/product';
+import { Theme } from '@app-types/theme';
+import { OrderFormData } from '@app-types/order';
 import { createStyles } from './styles';
 
 interface QuantityInputProps {

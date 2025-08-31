@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { useThemeStore } from '../../../../../stores/themeStore';
+import { useThemeStore } from '@stores/themeStore';
 import { createStyles } from '../styles';
 
 export const SubmitButton: React.FC<{

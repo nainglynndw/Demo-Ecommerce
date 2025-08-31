@@ -5,7 +5,7 @@ import {
   MediaType,
   ImagePickerResponse,
 } from 'react-native-image-picker';
-import { Theme } from '../../../../../types/theme';
+import { Theme } from '@app-types/theme';
 import { createAvatarStyles } from './AvatarSection.styles';
 
 interface AvatarSectionProps {

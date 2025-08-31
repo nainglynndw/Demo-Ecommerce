@@ -1,7 +1,7 @@
 import {
   formatCardNumber,
   formatExpiry,
-} from '@/features/orders/screens/CreateOrder/utils/formatting';
+} from '@orders/screens/CreateOrder/utils/formatting';
 
 describe('CreateOrder formatting utilities', () => {
   describe('formatCardNumber', () => {

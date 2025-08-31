@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { Product } from '../../../../../types/product';
-import { Theme } from '../../../../../types/theme';
+import { Product } from '@app-types/product';
+import { Theme } from '@app-types/theme';
 import { createStyles } from './styles';
 
 interface ProductSummaryProps {

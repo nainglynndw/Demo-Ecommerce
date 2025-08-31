@@ -3,10 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { OnboardingStep2Data } from '../../types';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { useUserStore } from '../../../../stores/userStore';
+import { useThemeStore } from '@stores/themeStore';
+import { useUserStore } from '@stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { MainStackParamList } from '../../../../navigation/MainNavigator';
+import { MainStackParamList } from '@navigation/MainNavigator';
 import { createStyles } from './styles';
 
 type OnboardingStep2NavigationProp = StackNavigationProp<

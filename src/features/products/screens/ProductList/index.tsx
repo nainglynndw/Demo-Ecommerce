@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useProducts } from '../../../../hooks/useProducts';
+import { useProducts } from '@hooks/useProducts';
 import { ProductCard } from '../../components/ProductCard';
 import { ProductListHeader } from '../../components/ProductListHeader';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { ProductListParams } from '../../../../types/product';
+import { useThemeStore } from '@stores/themeStore';
+import { ProductListParams } from '@app-types/product';
 import { createStyles } from './styles';
 
 type ProductListNavigationProp = StackNavigationProp<any, 'ProductList'>;

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import { SelectedImage } from '../hooks/useImagePicker';
 import { createStyles } from '../styles';
-import { useThemeStore } from '../../../../../stores/themeStore';
+import { useThemeStore } from '@stores/themeStore';
 
 interface ImagePickerSectionProps {
   selectedImages: SelectedImage[];

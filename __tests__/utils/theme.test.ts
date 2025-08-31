@@ -1,5 +1,5 @@
-import { getThemeFromMode } from '../../src/utils/theme';
-import { lightTheme, darkTheme } from '../../src/types/theme';
+import { getThemeFromMode } from '@utils/theme';
+import { lightTheme, darkTheme } from '@app-types/theme';
 
 describe('getThemeFromMode', () => {
   describe('light mode', () => {

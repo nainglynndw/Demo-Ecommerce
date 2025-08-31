@@ -2,11 +2,8 @@ import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
-import {
-  CreateProductRequest,
-  PRODUCT_CATEGORIES,
-} from '../../../../../types/product';
-import { useThemeStore } from '../../../../../stores/themeStore';
+import { CreateProductRequest, PRODUCT_CATEGORIES } from '@app-types/product';
+import { useThemeStore } from '@stores/themeStore';
 import { createStyles } from '../styles';
 
 interface ProductFormProps {

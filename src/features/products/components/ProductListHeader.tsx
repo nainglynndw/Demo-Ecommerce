@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { Theme } from '../../../types/theme';
-import { PRODUCT_CATEGORIES } from '../../../types/product';
+import { Theme } from '@app-types/theme';
+import { PRODUCT_CATEGORIES } from '@app-types/product';
 import { useNavigation } from '@react-navigation/native';
-import type { INavigationProp } from '../../../navigation/type';
+import type { INavigationProp } from '@navigation/type';
 
 interface ProductListHeaderProps {
   styles: any;

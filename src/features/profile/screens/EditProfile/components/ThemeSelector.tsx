@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Control, Controller } from 'react-hook-form';
-import { Theme } from '../../../../../types/theme';
+import { Theme } from '@app-types/theme';
 import { EditProfileFormData } from '../types';
 import { createThemeSelectorStyles } from './ThemeSelector.styles';
 

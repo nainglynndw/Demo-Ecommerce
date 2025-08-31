@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { useThemeStore } from '../../../../../../stores/themeStore';
+import { useThemeStore } from '@stores/themeStore';
 import { memo } from 'react';
 
 interface InfoRowProps {

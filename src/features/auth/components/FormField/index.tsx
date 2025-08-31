@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { Control, Controller, FieldError } from 'react-hook-form';
-import { useThemeStore } from '../../../../stores/themeStore';
+import { useThemeStore } from '@stores/themeStore';
 import { styles } from './styles';
 
 interface FormFieldProps {

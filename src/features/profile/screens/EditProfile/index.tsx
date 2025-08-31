@@ -10,9 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useUserStore } from '../../../../stores/userStore';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { MainStackParamList } from '../../../../navigation/MainNavigator';
+import { useUserStore } from '@stores/userStore';
+import { useThemeStore } from '@stores/themeStore';
+import { MainStackParamList } from '@navigation/MainNavigator';
 import { createStyles } from './styles';
 import { AvatarSection, FormInput, ThemeSelector } from './components';
 import { EditProfileFormData } from './types';

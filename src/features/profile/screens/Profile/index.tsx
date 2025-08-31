@@ -8,11 +8,11 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useUserStore } from '../../../../stores/userStore';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { useOrders } from '../../../../hooks/useOrders';
+import { useUserStore } from '@stores/userStore';
+import { useThemeStore } from '@stores/themeStore';
+import { useOrders } from '@hooks/useOrders';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { MainStackParamList } from '../../../../navigation/MainNavigator';
+import { MainStackParamList } from '@navigation/MainNavigator';
 import InfoRow from './components/InfoRow';
 
 type ProfileScreenNavigationProp = StackNavigationProp<

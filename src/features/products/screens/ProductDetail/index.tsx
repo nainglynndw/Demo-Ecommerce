@@ -11,11 +11,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { useProduct, useDeleteProduct } from '../../../../hooks/useProducts';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { useUserStore } from '../../../../stores/userStore';
+import { useProduct, useDeleteProduct } from '@hooks/useProducts';
+import { useThemeStore } from '@stores/themeStore';
+import { useUserStore } from '@stores/userStore';
 import { createStyles } from './styles';
-import { formatPrice, formatRating, formatDate } from '../../../../utils';
+import { formatPrice, formatRating, formatDate } from '@utils/formatting';
 
 type ProductDetailNavigationProp = StackNavigationProp<any, 'ProductDetail'>;
 type ProductDetailRouteProp = RouteProp<

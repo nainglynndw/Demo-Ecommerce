@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { CreateProductRequest } from '../../../../../types/product';
+import { CreateProductRequest } from '@app-types/product';
 
 export const useCreateProductForm = () => {
   return useForm<CreateProductRequest>({

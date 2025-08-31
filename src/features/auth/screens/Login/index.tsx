@@ -3,10 +3,10 @@ import { View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { LoginData } from '../../types';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { useUserStore } from '../../../../stores/userStore';
+import { useThemeStore } from '@stores/themeStore';
+import { useUserStore } from '@stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../../../../navigation/AuthNavigator';
+import { AuthStackParamList } from '@navigation/AuthNavigator';
 import { Header, FormField, Button, Footer } from '../../components';
 import { styles } from './styles';
 

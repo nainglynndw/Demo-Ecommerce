@@ -11,11 +11,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, useWatch } from 'react-hook-form';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { useProduct } from '../../../../hooks/useProducts';
-import { useCreateOrder } from '../../../../hooks/useOrders';
-import { useThemeStore } from '../../../../stores/themeStore';
-import { useUserStore } from '../../../../stores/userStore';
-import { OrderFormData, CreateOrderRequest } from '../../../../types/order';
+import { useProduct } from '@hooks/useProducts';
+import { useCreateOrder } from '@hooks/useOrders';
+import { useThemeStore } from '@stores/themeStore';
+import { useUserStore } from '@stores/userStore';
+import { OrderFormData, CreateOrderRequest } from '@app-types/order';
 import { createStyles } from './styles';
 import {
   ProductSummary,
