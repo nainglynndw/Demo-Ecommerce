@@ -1,5 +1,9 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { useCallback } from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 import { ProductListScreen } from '../features/products/screens/ProductList';
 import { ProductDetailScreen } from '../features/products/screens/ProductDetail';
 import { CreateProductScreen } from '../features/products/screens/CreateProduct';
@@ -40,6 +44,20 @@ export const MainNavigator: React.FC = () => {
     }
     return 'ProductList';
   };
+
+  const renderProfileHeaderRight = useCallback(
+    (navigation: StackNavigationProp<MainStackParamList, 'Profile'>) => (
+      <TouchableOpacity
+        style={{ marginRight: 15 }}
+        onPress={() => navigation.navigate('EditProfile')}
+      >
+        <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>
+          Edit
+        </Text>
+      </TouchableOpacity>
+    ),
+    [theme.colors.primary],
+  );
 
   return (
     <Stack.Navigator
@@ -96,9 +114,15 @@ export const MainNavigator: React.FC = () => {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{
-          headerShown: false,
-        }}
+        options={({ navigation }) => ({
+          headerShown: true,
+          title: 'Profile',
+          headerBackTitle: '',
+          headerRight: () =>
+            renderProfileHeaderRight(
+              navigation as StackNavigationProp<MainStackParamList, 'Profile'>,
+            ),
+        })}
       />
       <Stack.Screen
         name="EditProfile"

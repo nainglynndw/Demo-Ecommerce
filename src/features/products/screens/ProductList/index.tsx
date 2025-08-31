@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  FlatList,
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
@@ -15,6 +14,11 @@ import { ProductListHeader } from '../../components/ProductListHeader';
 import { useThemeStore } from '@stores/themeStore';
 import { ProductListParams } from '@app-types/product';
 import { createStyles } from './styles';
+import Animated, {
+  FadeInUp,
+  SlideInLeft,
+  ReduceMotion,
+} from 'react-native-reanimated';
 
 type ProductListNavigationProp = StackNavigationProp<any, 'ProductList'>;
 
@@ -113,23 +117,36 @@ export const ProductListScreen: React.FC<ProductListScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
+      <Animated.FlatList
         data={allProducts}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            onPress={() => handleProductPress(item.id)}
-          />
+        renderItem={({ item, index }) => (
+          <Animated.View
+            entering={FadeInUp.duration(800)
+              .delay(index * 100)
+              .reduceMotion(ReduceMotion.Never)}
+          >
+            <ProductCard
+              product={item}
+              onPress={() => handleProductPress(item.id)}
+            />
+          </Animated.View>
         )}
         ListHeaderComponent={
-          <ProductListHeader
-            styles={styles}
-            theme={theme}
-            onSearch={handleSearch}
-            onCategoryFilter={handleCategoryFilter}
-            onCreateProduct={handleCreateProduct}
-          />
+          <Animated.View
+            entering={SlideInLeft.duration(800)
+              .delay(200)
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateX: -300 }] })}
+          >
+            <ProductListHeader
+              styles={styles}
+              theme={theme}
+              onSearch={handleSearch}
+              onCategoryFilter={handleCategoryFilter}
+              onCreateProduct={handleCreateProduct}
+            />
+          </Animated.View>
         }
         ListEmptyComponent={!isLoading ? renderEmptyState : null}
         contentContainerStyle={styles.listContent}

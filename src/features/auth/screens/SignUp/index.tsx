@@ -9,6 +9,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '@navigation/AuthNavigator';
 import { Header, FormField, Button, Footer } from '../../components';
 import { styles } from './styles';
+import Animated, {
+  BounceInDown,
+  BounceInLeft,
+  BounceInRight,
+  BounceInUp,
+  ReduceMotion,
+} from 'react-native-reanimated';
 
 type SignUpScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -67,67 +74,107 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
     return (
       <SafeAreaView style={currentStyles.container}>
         <View style={currentStyles.content}>
-          <Header title="Create Account" subtitle="Sign up to get started" />
+          <Animated.View
+            entering={BounceInUp.duration(1000)
+              .delay(300)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateY: -420 }] })}
+          >
+            <Header title="Create Account" subtitle="Sign up to get started" />
+          </Animated.View>
 
           <View style={currentStyles.form}>
-            <FormField
-              control={control}
-              name="email"
-              label="Email"
-              placeholder="Enter your email"
-              rules={{
-                required: 'Email is required',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Please enter a valid email',
-                },
-              }}
-              error={errors.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+            <Animated.View
+              entering={BounceInLeft.duration(1000)
+                .delay(300)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: -420 }] })}
+            >
+              <FormField
+                control={control}
+                name="email"
+                label="Email"
+                placeholder="Enter your email"
+                rules={{
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Please enter a valid email',
+                  },
+                }}
+                error={errors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </Animated.View>
 
-            <FormField
-              control={control}
-              name="password"
-              label="Password"
-              placeholder="Enter your password"
-              rules={{
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters',
-                },
-              }}
-              error={errors.password}
-              secureTextEntry
-            />
+            <Animated.View
+              entering={BounceInRight.duration(1000)
+                .delay(400)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: 920 }] })}
+            >
+              <FormField
+                control={control}
+                name="password"
+                label="Password"
+                placeholder="Enter your password"
+                rules={{
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters',
+                  },
+                }}
+                error={errors.password}
+                secureTextEntry
+              />
+            </Animated.View>
 
-            <FormField
-              control={control}
-              name="confirmPassword"
-              label="Confirm Password"
-              placeholder="Confirm your password"
-              rules={{
-                required: 'Please confirm your password',
-                validate: (value: string) =>
-                  value === password || 'Passwords do not match',
-              }}
-              error={errors.confirmPassword}
-              secureTextEntry
-            />
+            <Animated.View
+              entering={BounceInLeft.duration(1000)
+                .delay(500)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: -920 }] })}
+            >
+              <FormField
+                control={control}
+                name="confirmPassword"
+                label="Confirm Password"
+                placeholder="Confirm your password"
+                rules={{
+                  required: 'Please confirm your password',
+                  validate: (value: string) =>
+                    value === password || 'Passwords do not match',
+                }}
+                error={errors.confirmPassword}
+                secureTextEntry
+              />
+            </Animated.View>
 
-            <Button
-              onPress={handleSubmit(onSubmit)}
-              disabled={!isValid}
-              title="Create Account"
-            />
+            <Animated.View
+              entering={BounceInDown.duration(1000)
+                .delay(600)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateY: 1200 }] })}
+            >
+              <Button
+                onPress={handleSubmit(onSubmit)}
+                disabled={!isValid}
+                title="Create Account"
+              />
 
-            <Footer
-              text="Already have an account?"
-              linkText="Sign In"
-              onLinkPress={handleSignInPress}
-            />
+              <Footer
+                text="Already have an account?"
+                linkText="Sign In"
+                onLinkPress={handleSignInPress}
+              />
+            </Animated.View>
           </View>
         </View>
       </SafeAreaView>
