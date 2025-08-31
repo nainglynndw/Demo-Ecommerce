@@ -1,7 +1,7 @@
-import {create} from 'zustand';
-import {Appearance} from 'react-native';
-import {Theme, ThemeMode} from '../types/theme';
-import {getThemeFromMode} from '../utils/theme';
+import { create } from 'zustand';
+import { Appearance } from 'react-native';
+import { Theme, ThemeMode } from '../types/theme';
+import { getThemeFromMode } from '../utils/theme';
 
 interface ThemeStore {
   theme: Theme;

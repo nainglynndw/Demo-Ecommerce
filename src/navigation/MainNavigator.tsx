@@ -11,6 +11,7 @@ import { useUserStore } from '../stores/userStore';
 import { OnboardingStep1Screen } from '../features/auth/screens/OnboardingStep1';
 import { OnboardingStep2Screen } from '../features/auth/screens/OnboardingStep2';
 import { CreateOrderScreen } from '../features/orders/screens/CreateOrder';
+import { EditProductScreen } from '../features/products/screens/EditProduct';
 
 export type MainStackParamList = {
   OnboardingStep1: undefined;
@@ -102,6 +103,13 @@ export const MainNavigator: React.FC = () => {
       <Stack.Screen
         name="EditProfile"
         component={EditProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="EditProduct" 
+        component={EditProductScreen}
         options={{
           headerShown: false,
         }}
