@@ -51,20 +51,28 @@ export interface OnboardingData
   avatar?: string;
 }
 
-// For tracking completion status
 export interface UserProfile {
   id: string;
   email: string;
+  password: string;
   name?: string;
   phone?: string;
   dateOfBirth?: string;
-  address?: Address;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
   avatar?: string;
   preferences: {
     theme: 'light' | 'dark' | 'system';
   };
   onboardingCompleted: {
-    step1: boolean; // Basic info
-    step2: boolean; // Address info
+    step1: boolean;
+    step2: boolean;
   };
+  createdAt: string;
+  updatedAt: string;
 }

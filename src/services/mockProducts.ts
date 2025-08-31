@@ -1,4 +1,4 @@
-import {Product} from '../types/product';
+import { Product } from '../types/product';
 
 export const mockProducts: Product[] = [
   {
@@ -9,7 +9,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400'
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400',
     ],
     stock: 15,
     rating: 4.8,
@@ -26,7 +26,7 @@ export const mockProducts: Product[] = [
     category: 'Sports',
     images: [
       'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400',
-      'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400'
+      'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400',
     ],
     stock: 25,
     rating: 4.6,
@@ -43,7 +43,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
-      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400'
+      'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400',
     ],
     stock: 8,
     rating: 4.9,
@@ -60,7 +60,7 @@ export const mockProducts: Product[] = [
     category: 'Clothing',
     images: [
       'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
-      'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=400'
+      'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=400',
     ],
     stock: 20,
     rating: 4.4,
@@ -77,7 +77,7 @@ export const mockProducts: Product[] = [
     category: 'Books',
     images: [
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
     ],
     stock: 50,
     rating: 4.7,
@@ -94,7 +94,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400'
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400',
     ],
     stock: 12,
     rating: 4.5,
@@ -111,7 +111,7 @@ export const mockProducts: Product[] = [
     category: 'Sports',
     images: [
       'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400',
-      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400'
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
     ],
     stock: 30,
     rating: 4.3,
@@ -128,7 +128,7 @@ export const mockProducts: Product[] = [
     category: 'Home',
     images: [
       'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400',
-      'https://images.unsplash.com/photo-1459755486867-b55449bb39ff?w=400'
+      'https://images.unsplash.com/photo-1459755486867-b55449bb39ff?w=400',
     ],
     stock: 18,
     rating: 4.6,
@@ -145,7 +145,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400',
-      'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400'
+      'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400',
     ],
     stock: 22,
     rating: 4.4,
@@ -157,12 +157,13 @@ export const mockProducts: Product[] = [
   {
     id: '10',
     name: 'Leather Wallet',
-    description: 'Genuine leather wallet with multiple card slots and coin pocket',
+    description:
+      'Genuine leather wallet with multiple card slots and coin pocket',
     price: 45.99,
     category: 'Accessories',
     images: [
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
-      'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400'
+      'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400',
     ],
     stock: 35,
     rating: 4.7,
@@ -179,7 +180,7 @@ export const mockProducts: Product[] = [
     category: 'Sports',
     images: [
       'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400',
-      'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400'
+      'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400',
     ],
     stock: 45,
     rating: 4.5,
@@ -196,7 +197,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400',
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400'
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400',
     ],
     stock: 14,
     rating: 4.8,
@@ -213,7 +214,7 @@ export const mockProducts: Product[] = [
     category: 'Books',
     images: [
       'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400',
-      'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400'
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
     ],
     stock: 28,
     rating: 4.6,
@@ -230,7 +231,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1609592863912-f740a23addc7?w=400',
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     ],
     stock: 40,
     rating: 4.2,
@@ -247,7 +248,7 @@ export const mockProducts: Product[] = [
     category: 'Sports',
     images: [
       'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400',
-      'https://images.unsplash.com/photo-1506629905607-21e51204dfad?w=400'
+      'https://images.unsplash.com/photo-1506629905607-21e51204dfad?w=400',
     ],
     stock: 55,
     rating: 4.1,
@@ -264,7 +265,7 @@ export const mockProducts: Product[] = [
     category: 'Home',
     images: [
       'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400',
-      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400'
+      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
     ],
     stock: 25,
     rating: 4.3,
@@ -281,7 +282,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=400',
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     ],
     stock: 16,
     rating: 4.4,
@@ -298,7 +299,7 @@ export const mockProducts: Product[] = [
     category: 'Food',
     images: [
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-      'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400'
+      'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
     ],
     stock: 60,
     rating: 4.7,
@@ -315,7 +316,7 @@ export const mockProducts: Product[] = [
     category: 'Electronics',
     images: [
       'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
-      'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400'
+      'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400',
     ],
     stock: 20,
     rating: 4.5,
@@ -332,7 +333,7 @@ export const mockProducts: Product[] = [
     category: 'Home',
     images: [
       'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
     ],
     stock: 32,
     rating: 4.6,
@@ -342,3 +343,111 @@ export const mockProducts: Product[] = [
     updatedAt: '2023-12-27T10:35:00Z',
   },
 ];
+
+export const findProductById = (id: string): Product | undefined => {
+  return mockProducts.find(product => product.id === id);
+};
+
+export const findProductsByCategory = (category: string): Product[] => {
+  return mockProducts.filter(product => product.category === category);
+};
+
+export const searchProducts = (query: string): Product[] => {
+  const searchLower = query.toLowerCase();
+  return mockProducts.filter(
+    product =>
+      product.name.toLowerCase().includes(searchLower) ||
+      product.description.toLowerCase().includes(searchLower),
+  );
+};
+
+export const addProduct = (
+  product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
+): Product => {
+  const newProduct: Product = {
+    ...product,
+    id: Date.now().toString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  mockProducts.unshift(newProduct); // Add to beginning for recent first
+  return newProduct;
+};
+
+export const updateProduct = (
+  id: string,
+  updates: Partial<Product>,
+): Product | null => {
+  const productIndex = mockProducts.findIndex(product => product.id === id);
+  if (productIndex === -1) return null;
+
+  const updatedProduct: Product = {
+    ...mockProducts[productIndex],
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+
+  mockProducts[productIndex] = updatedProduct;
+  return updatedProduct;
+};
+
+export const deleteProduct = (id: string): boolean => {
+  const productIndex = mockProducts.findIndex(product => product.id === id);
+  if (productIndex === -1) return false;
+
+  mockProducts.splice(productIndex, 1);
+  return true;
+};
+
+export const getProductsWithFilters = (params: {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  search?: string;
+  sortBy?: keyof Product;
+  sortOrder?: 'asc' | 'desc';
+}) => {
+  let products = [...mockProducts];
+
+  // Apply filters
+  if (params.category) {
+    products = products.filter(p => p.category === params.category);
+  }
+
+  if (params.minPrice !== undefined) {
+    products = products.filter(p => p.price >= params.minPrice!);
+  }
+
+  if (params.maxPrice !== undefined) {
+    products = products.filter(p => p.price <= params.maxPrice!);
+  }
+
+  if (params.search) {
+    const searchLower = params.search.toLowerCase();
+    products = products.filter(
+      p =>
+        p.name.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower),
+    );
+  }
+
+  // Apply sorting
+  if (params.sortBy) {
+    products.sort((a, b) => {
+      let aValue: any = a[params.sortBy!];
+      let bValue: any = b[params.sortBy!];
+
+      if (params.sortBy === 'price' || params.sortBy === 'rating') {
+        aValue = Number(aValue);
+        bValue = Number(bValue);
+      }
+
+      if (params.sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      }
+      return aValue < bValue ? 1 : -1;
+    });
+  }
+
+  return products;
+};

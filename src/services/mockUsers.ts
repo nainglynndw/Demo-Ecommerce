@@ -45,8 +45,8 @@ export const mockUsers: MockUser[] = [
       theme: 'system',
     },
     onboardingCompleted: {
-      step1: false,
-      step2: false,
+      step1: true,
+      step2: true,
     },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',

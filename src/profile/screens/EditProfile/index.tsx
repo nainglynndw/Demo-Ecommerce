@@ -26,7 +26,6 @@ interface EditProfileScreenProps {
   navigation: EditProfileNavigationProp;
 }
 
-
 export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   navigation,
 }) => {
@@ -57,7 +56,6 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 
   const styles = createStyles(theme);
 
-
   const onSubmit = async (data: EditProfileFormData) => {
     try {
       setIsSubmitting(true);
@@ -84,10 +82,7 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 
       // Update theme
       await setThemeMode(data.theme);
-
-      Alert.alert('Success', 'Profile updated successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+      navigation.goBack();
     } catch (error) {
       Alert.alert('Error', 'Failed to update profile. Please try again.');
     } finally {

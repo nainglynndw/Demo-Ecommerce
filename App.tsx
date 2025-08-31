@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -7,10 +7,17 @@ import { useThemeStore } from './src/stores/themeStore';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { queryClient } from './src/config/queryClient';
 import { DeveloperUtils } from './src/components/DeveloperUtils';
+import { useUserStore } from './src/stores/userStore';
 
 function App() {
   const { theme } = useThemeStore();
   const [showDeveloperUtils, setShowDeveloperUtils] = React.useState(false);
+  const { initializeUser } = useUserStore();
+
+  useEffect(() => {
+    initializeUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

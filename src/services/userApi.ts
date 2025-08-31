@@ -14,9 +14,7 @@ import {
   findUserById,
   deleteUser,
 } from './mockUsers';
-
-const delay = (ms: number) =>
-  new Promise<void>(resolve => setTimeout(resolve, ms));
+import { delay } from '../utils';
 
 export class UserApi {
   static async login(
@@ -31,21 +29,9 @@ export class UserApi {
         throw new Error('Invalid email or password');
       }
 
-      const userProfile: UserProfile = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        phone: user.phone,
-        dateOfBirth: user.dateOfBirth,
-        address: user.address,
-        avatar: user.avatar,
-        preferences: user.preferences,
-        onboardingCompleted: user.onboardingCompleted,
-      };
-
       const token = `mock_token_${user.id}_${Date.now()}`;
 
-      return { user: userProfile, token };
+      return { user, token };
     });
   }
 
@@ -71,16 +57,9 @@ export class UserApi {
         },
       });
 
-      const userProfile: UserProfile = {
-        id: newUser.id,
-        email: newUser.email,
-        preferences: newUser.preferences,
-        onboardingCompleted: newUser.onboardingCompleted,
-      };
-
       const token = `mock_token_${newUser.id}_${Date.now()}`;
 
-      return { user: userProfile, token };
+      return { user: newUser, token };
     });
   }
 
@@ -105,19 +84,7 @@ export class UserApi {
         throw new Error('User not found');
       }
 
-      const userProfile: UserProfile = {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        name: updatedUser.name,
-        phone: updatedUser.phone,
-        dateOfBirth: updatedUser.dateOfBirth,
-        address: updatedUser.address,
-        avatar: updatedUser.avatar,
-        preferences: updatedUser.preferences,
-        onboardingCompleted: updatedUser.onboardingCompleted,
-      };
-
-      return userProfile;
+      return updatedUser;
     });
   }
 
@@ -128,17 +95,7 @@ export class UserApi {
       const user = findUserById(userId);
       if (!user) return null;
 
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        phone: user.phone,
-        dateOfBirth: user.dateOfBirth,
-        address: user.address,
-        avatar: user.avatar,
-        preferences: user.preferences,
-        onboardingCompleted: user.onboardingCompleted,
-      };
+      return user;
     });
   }
 
@@ -163,17 +120,7 @@ export class UserApi {
         throw new Error('User not found');
       }
 
-      return {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        name: updatedUser.name,
-        phone: updatedUser.phone,
-        dateOfBirth: updatedUser.dateOfBirth,
-        address: updatedUser.address,
-        avatar: updatedUser.avatar,
-        preferences: updatedUser.preferences,
-        onboardingCompleted: updatedUser.onboardingCompleted,
-      };
+      return updatedUser;
     });
   }
 
@@ -197,17 +144,7 @@ export class UserApi {
         throw new Error('User not found');
       }
 
-      return {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        name: updatedUser.name,
-        phone: updatedUser.phone,
-        dateOfBirth: updatedUser.dateOfBirth,
-        address: updatedUser.address,
-        avatar: updatedUser.avatar,
-        preferences: updatedUser.preferences,
-        onboardingCompleted: updatedUser.onboardingCompleted,
-      };
+      return updatedUser;
     });
   }
 

@@ -1,11 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Order, CreateOrderRequest } from '../types/order';
 import { ApiErrorHandler } from './apiErrorHandler';
+import { delay } from '../utils';
 
 const STORAGE_KEY = 'orders';
-
-const delay = (ms: number) =>
-  new Promise<void>(resolve => setTimeout(resolve, ms));
 
 export class OrderApi {
   private static async getStoredOrders(): Promise<Order[]> {
@@ -61,12 +59,15 @@ export class OrderApi {
   }
 
   static async getOrdersByEmail(userEmail: string): Promise<Order[]> {
-    return ApiErrorHandler.intercept(`/orders?customerEmail=${userEmail}`, async () => {
-      await delay(300);
+    return ApiErrorHandler.intercept(
+      `/orders?customerEmail=${userEmail}`,
+      async () => {
+        await delay(300);
 
-      const orders = await this.getStoredOrders();
-      return orders.filter(order => order.customerEmail === userEmail);
-    });
+        const orders = await this.getStoredOrders();
+        return orders.filter(order => order.customerEmail === userEmail);
+      },
+    );
   }
 
   static async getOrder(id: string): Promise<Order | null> {

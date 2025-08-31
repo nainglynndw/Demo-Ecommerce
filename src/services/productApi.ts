@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Product,
   CreateProductRequest,
@@ -6,43 +5,22 @@ import {
   ProductListResponse,
   ProductListParams,
 } from '../types/product';
-import { mockProducts } from './mockProducts';
+import {
+  findProductById,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getProductsWithFilters,
+} from './mockProducts';
 import { ApiErrorHandler } from './apiErrorHandler';
-
-const STORAGE_KEY = 'products';
-
-const delay = (ms: number) =>
-  new Promise<void>(resolve => setTimeout(resolve, ms));
+import { delay } from '../utils';
 
 export class ProductApi {
-  private static async getStoredProducts(): Promise<Product[]> {
-    try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-      // Initialize with mock data if no stored products
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(mockProducts));
-      return mockProducts;
-    } catch (error) {
-      console.error('Error getting stored products:', error);
-      return mockProducts;
-    }
-  }
-
-  private static async saveProducts(products: Product[]): Promise<void> {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-    } catch (error) {
-      console.error('Error saving products:', error);
-    }
-  }
-
   static async getProducts(
     params: ProductListParams = {},
   ): Promise<ProductListResponse> {
     return ApiErrorHandler.intercept('/products', async () => {
-      await delay(300); // Simulate network delay
+      await delay(300);
 
       const {
         page = 1,
@@ -55,44 +33,14 @@ export class ProductApi {
         sortOrder = 'desc',
       } = params;
 
-      let products = await this.getStoredProducts();
-
-      // Apply filters
-      if (category) {
-        products = products.filter(p => p.category === category);
-      }
-
-      if (minPrice !== undefined) {
-        products = products.filter(p => p.price >= minPrice);
-      }
-
-      if (maxPrice !== undefined) {
-        products = products.filter(p => p.price <= maxPrice);
-      }
-
-      if (search) {
-        const searchLower = search.toLowerCase();
-        products = products.filter(
-          p =>
-            p.name.toLowerCase().includes(searchLower) ||
-            p.description.toLowerCase().includes(searchLower),
-        );
-      }
-
-      // Apply sorting
-      products.sort((a, b) => {
-        let aValue: any = a[sortBy];
-        let bValue: any = b[sortBy];
-
-        if (sortBy === 'price' || sortBy === 'rating') {
-          aValue = Number(aValue);
-          bValue = Number(bValue);
-        }
-
-        if (sortOrder === 'asc') {
-          return aValue > bValue ? 1 : -1;
-        }
-        return aValue < bValue ? 1 : -1;
+      // Use mockProducts as database/server
+      const products = getProductsWithFilters({
+        category,
+        minPrice,
+        maxPrice,
+        search,
+        sortBy,
+        sortOrder,
       });
 
       // Apply pagination
@@ -114,8 +62,9 @@ export class ProductApi {
     return ApiErrorHandler.intercept(`/products/${id}`, async () => {
       await delay(500);
 
-      const products = await this.getStoredProducts();
-      return products.find(p => p.id === id) || null;
+      // Call server (mockProducts) to get product
+      const product = findProductById(id);
+      return product || null;
     });
   }
 
@@ -126,20 +75,13 @@ export class ProductApi {
     return ApiErrorHandler.intercept('/products', async () => {
       await delay(1000);
 
-      const products = await this.getStoredProducts();
-
-      const newProduct: Product = {
+      // Create new product on server (mockProducts)
+      const newProduct = addProduct({
         ...data,
-        id: Date.now().toString(),
         rating: 0,
         reviews: 0,
         createdBy: userEmail,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      const updatedProducts = [newProduct, ...products];
-      await this.saveProducts(updatedProducts);
+      });
 
       return newProduct;
     });
@@ -149,21 +91,11 @@ export class ProductApi {
     return ApiErrorHandler.intercept(`/products/${data.id}`, async () => {
       await delay(800);
 
-      const products = await this.getStoredProducts();
-      const index = products.findIndex(p => p.id === data.id);
-
-      if (index === -1) {
+      // Call server to update product
+      const updatedProduct = updateProduct(data.id, data);
+      if (!updatedProduct) {
         throw new Error('Product not found');
       }
-
-      const updatedProduct = {
-        ...products[index],
-        ...data,
-        updatedAt: new Date().toISOString(),
-      };
-
-      products[index] = updatedProduct;
-      await this.saveProducts(products);
 
       return updatedProduct;
     });
@@ -173,9 +105,11 @@ export class ProductApi {
     return ApiErrorHandler.intercept(`/products/${id}`, async () => {
       await delay(600);
 
-      const products = await this.getStoredProducts();
-      const filteredProducts = products.filter(p => p.id !== id);
-      await this.saveProducts(filteredProducts);
+      // Call server to delete product
+      const success = deleteProduct(id);
+      if (!success) {
+        throw new Error('Product not found');
+      }
     });
   }
 }

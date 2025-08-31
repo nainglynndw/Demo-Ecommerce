@@ -27,14 +27,13 @@ const Stack = createStackNavigator<MainStackParamList>();
 
 export const MainNavigator: React.FC = () => {
   const { theme } = useThemeStore();
-  const { needsOnboarding } = useUserStore();
+  const { userProfile } = useUserStore();
 
-  // Determine initial route based on onboarding status
   const getInitialRouteName = (): keyof MainStackParamList => {
-    if (needsOnboarding === 'step1') {
+    if (!userProfile?.onboardingCompleted?.step1) {
       return 'OnboardingStep1';
     }
-    if (needsOnboarding === 'step2') {
+    if (!userProfile?.onboardingCompleted?.step2) {
       return 'OnboardingStep2';
     }
     return 'ProductList';
