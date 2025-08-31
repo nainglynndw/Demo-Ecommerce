@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
+import { SPACING, FONT_SIZE, FONT_WEIGHT } from '@constants';
 
 export const styles = StyleSheet.create({
   header: {
-    marginBottom: 32,
+    marginBottom: SPACING.xxxl,
   },
   title: {
-    fontSize: 30,
-    fontWeight: 'bold',
+    fontSize: FONT_SIZE.xxxxxl,
+    fontWeight: FONT_WEIGHT.bold,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.lg,
     textAlign: 'center',
   },
 });

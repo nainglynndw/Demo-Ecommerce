@@ -1,9 +1,15 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { Theme } from '@app-types/theme';
+import { IMAGE_WIDTH_RATIO, IMAGE_DIMENSIONS } from '@products/constants';
+import {
+  SPACING,
+  COLORS,
+  FONT_SIZE,
+  FONT_WEIGHT,
+  BORDER_RADIUS,
+} from '@constants';
 
 const { width } = Dimensions.get('window');
-const IMAGE_WIDTH_RATIO = 0.7;
-const WHITE_COLOR = '#FFFFFF';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -18,49 +24,49 @@ export const createStyles = (theme: Theme) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      gap: 12,
+      gap: SPACING.md,
     },
     loadingText: {
-      fontSize: 16,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.textSecondary,
     },
     errorContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 20,
+      paddingHorizontal: SPACING.xl,
     },
     errorText: {
-      fontSize: 16,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.error,
       textAlign: 'center',
-      marginBottom: 20,
+      marginBottom: SPACING.xl,
     },
     form: {
-      paddingHorizontal: 20,
-      paddingTop: 20,
+      paddingHorizontal: SPACING.xl,
+      paddingTop: SPACING.xl,
     },
     inputGroup: {
-      marginBottom: 20,
+      marginBottom: SPACING.xl,
     },
     label: {
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: FONT_SIZE.lg,
+      fontWeight: FONT_WEIGHT.semiBold,
       color: theme.colors.text,
-      marginBottom: 8,
+      marginBottom: SPACING.sm,
     },
     labelContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: SPACING.sm,
     },
     input: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      fontSize: 16,
+      borderRadius: BORDER_RADIUS.md,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.md,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.text,
       borderWidth: 1,
       borderColor: theme.colors.border,
@@ -73,7 +79,7 @@ export const createStyles = (theme: Theme) =>
       textAlignVertical: 'top',
     },
     pickerContainer: {
-      paddingHorizontal: 8,
+      paddingHorizontal: SPACING.sm,
       paddingVertical: 0,
     },
     picker: {
@@ -81,29 +87,29 @@ export const createStyles = (theme: Theme) =>
     },
     row: {
       flexDirection: 'row',
-      gap: 12,
-      marginBottom: 20,
+      gap: SPACING.md,
+      marginBottom: SPACING.xl,
     },
     halfInput: {
       flex: 1,
     },
     imagePreviewContainer: {
-      marginTop: 12,
+      marginTop: SPACING.md,
     },
     imageList: {
-      gap: 12,
+      gap: SPACING.md,
     },
     imagePreviewItem: {
       width: width * IMAGE_WIDTH_RATIO,
       backgroundColor: theme.colors.surface,
-      borderRadius: 8,
+      borderRadius: BORDER_RADIUS.md,
       overflow: 'hidden',
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
     imagePreview: {
       width: '100%',
-      height: 160,
+      height: IMAGE_DIMENSIONS.thumbnail * 2.67, // 160
     },
     removeImageButton: {
       position: 'absolute',
@@ -112,7 +118,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.error,
       width: 24,
       height: 24,
-      borderRadius: 12,
+      borderRadius: BORDER_RADIUS.lg,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -131,7 +137,7 @@ export const createStyles = (theme: Theme) =>
     },
     emptyImageContainer: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 8,
+      borderRadius: BORDER_RADIUS.md,
       padding: 24,
       alignItems: 'center',
       borderWidth: 1,
@@ -153,22 +159,22 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.primary,
       paddingHorizontal: 12,
       paddingVertical: 6,
-      borderRadius: 6,
+      borderRadius: BORDER_RADIUS.sm,
     },
     addButtonText: {
-      color: WHITE_COLOR,
+      color: COLORS.white,
       fontSize: 14,
       fontWeight: '600',
     },
     removeButtonText: {
-      color: WHITE_COLOR,
+      color: COLORS.white,
       fontSize: 16,
       fontWeight: 'bold',
     },
     updateButton: {
       backgroundColor: theme.colors.primary,
       paddingVertical: 16,
-      borderRadius: 12,
+      borderRadius: BORDER_RADIUS.lg,
       alignItems: 'center',
       marginTop: 20,
     },
@@ -176,7 +182,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.textSecondary,
     },
     updateButtonText: {
-      color: WHITE_COLOR,
+      color: COLORS.white,
       fontSize: 18,
       fontWeight: '600',
     },

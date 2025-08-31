@@ -111,7 +111,8 @@ export const MainNavigator: React.FC = () => {
         name="EditProduct"
         component={EditProductScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerBackTitle: '',
         }}
       />
     </Stack.Navigator>

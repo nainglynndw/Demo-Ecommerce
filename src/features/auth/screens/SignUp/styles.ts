@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from '@app-types/theme';
+import { SPACING } from '@constants';
 
 export const styles = (theme: Theme) =>
   StyleSheet.create({
@@ -9,10 +10,10 @@ export const styles = (theme: Theme) =>
     },
     content: {
       flex: 1,
-      paddingHorizontal: 24,
+      paddingHorizontal: SPACING.xxl,
       justifyContent: 'center',
     },
     form: {
-      gap: 16,
+      gap: SPACING.lg,
     },
   });

@@ -6,6 +6,7 @@ import {
   ImagePickerResponse,
   MediaType,
 } from 'react-native-image-picker';
+import { MAX_IMAGE_SIZE } from '@products/constants';
 
 export interface SelectedImage {
   uri: string;
@@ -46,8 +47,8 @@ export const useImagePicker = () => {
     const options = {
       mediaType: 'photo' as MediaType,
       includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      maxHeight: MAX_IMAGE_SIZE,
+      maxWidth: MAX_IMAGE_SIZE,
     };
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
@@ -72,8 +73,8 @@ export const useImagePicker = () => {
     const options = {
       mediaType: 'photo' as MediaType,
       includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      maxHeight: MAX_IMAGE_SIZE,
+      maxWidth: MAX_IMAGE_SIZE,
     };
 
     try {
@@ -93,7 +94,6 @@ export const useImagePicker = () => {
       }
     } catch (error) {
       console.log('Camera launch error:', error);
-      
     }
   };
 

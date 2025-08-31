@@ -1,23 +1,24 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from '@app-types/theme';
+import { SPACING, BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT } from '@constants';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     inputGroup: {
-      marginBottom: 20,
+      marginBottom: SPACING.xl,
     },
     label: {
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: FONT_SIZE.lg,
+      fontWeight: FONT_WEIGHT.semiBold,
       color: theme.colors.text,
-      marginBottom: 8,
+      marginBottom: SPACING.sm,
     },
     input: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      fontSize: 16,
+      borderRadius: BORDER_RADIUS.md,
+      paddingHorizontal: SPACING.lg,
+      paddingVertical: SPACING.md,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.text,
       borderWidth: 1,
       borderColor: theme.colors.border,
@@ -27,7 +28,7 @@ export const createStyles = (theme: Theme) =>
     },
     errorText: {
       color: theme.colors.error,
-      fontSize: 14,
-      marginTop: 4,
+      fontSize: FONT_SIZE.md,
+      marginTop: SPACING.xs,
     },
   });

@@ -1,48 +1,46 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from '@app-types/theme';
+import { SPACING, BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT, SHADOW } from '@constants';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 12,
-      marginBottom: 16,
-      padding: 16,
+      borderRadius: BORDER_RADIUS.lg,
+      marginBottom: SPACING.lg,
+      padding: SPACING.lg,
       shadowColor: theme.colors.shadow,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
+      shadowOffset: SHADOW.offset.md,
+      shadowOpacity: SHADOW.opacity.medium,
+      shadowRadius: SHADOW.radius.md,
       elevation: 3,
     },
     image: {
       width: '100%',
       height: 200,
-      borderRadius: 8,
-      marginBottom: 12,
+      borderRadius: BORDER_RADIUS.md,
+      marginBottom: SPACING.md,
     },
     content: {
       flex: 1,
     },
     name: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: FONT_SIZE.xl,
+      fontWeight: FONT_WEIGHT.semiBold,
       color: theme.colors.text,
       marginBottom: 4,
     },
     category: {
-      fontSize: 14,
+      fontSize: FONT_SIZE.md,
       color: theme.colors.primary,
-      fontWeight: '500',
-      marginBottom: 8,
+      fontWeight: FONT_WEIGHT.medium,
+      marginBottom: SPACING.sm,
     },
     description: {
-      fontSize: 14,
+      fontSize: FONT_SIZE.md,
       color: theme.colors.textSecondary,
       lineHeight: 20,
-      marginBottom: 12,
+      marginBottom: SPACING.md,
     },
     footer: {
       flexDirection: 'row',
@@ -53,18 +51,18 @@ export const createStyles = (theme: Theme) =>
       flex: 1,
     },
     price: {
-      fontSize: 20,
-      fontWeight: '700',
+      fontSize: FONT_SIZE.xxl,
+      fontWeight: FONT_WEIGHT.bold,
       color: theme.colors.primary,
       marginBottom: 2,
     },
     stock: {
-      fontSize: 12,
+      fontSize: FONT_SIZE.sm,
       color: theme.colors.textSecondary,
     },
     rating: {
-      fontSize: 14,
+      fontSize: FONT_SIZE.md,
       color: theme.colors.text,
-      fontWeight: '500',
+      fontWeight: FONT_WEIGHT.medium,
     },
   });

@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { SPACING, FONT_SIZE, FONT_WEIGHT } from '@constants';
 
 export const styles = StyleSheet.create({
   avatarSection: {
     alignItems: 'center',
-    padding: 20,
+    padding: SPACING.xl,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -14,7 +15,7 @@ export const styles = StyleSheet.create({
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: SPACING.lg - 1,
     overflow: 'hidden',
   },
   avatar: {
@@ -30,11 +31,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarText: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: FONT_SIZE.xxxxxxxl,
+    fontWeight: FONT_WEIGHT.bold,
   },
   userName: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: FONT_WEIGHT.semiBold,
   },
 });

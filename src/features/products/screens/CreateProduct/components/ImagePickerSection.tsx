@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import { SelectedImage } from '../hooks/useImagePicker';
 import { createStyles } from '../styles';
 import { useThemeStore } from '@stores/themeStore';
+import { BYTES_PER_MEGABYTE } from '@products/constants';
 
 interface ImagePickerSectionProps {
   selectedImages: SelectedImage[];
@@ -19,7 +20,7 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
     if (!bytes) {
       return '';
     }
-    const mb = bytes / (1024 * 1024);
+    const mb = bytes / BYTES_PER_MEGABYTE;
     return `${mb.toFixed(1)} MB`;
   }, []);
 

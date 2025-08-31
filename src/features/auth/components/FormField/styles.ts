@@ -1,23 +1,24 @@
 import { StyleSheet } from 'react-native';
+import { SPACING, BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT } from '@constants';
 
 export const styles = StyleSheet.create({
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.medium,
+    marginBottom: SPACING.sm,
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
+    borderRadius: BORDER_RADIUS.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    fontSize: FONT_SIZE.lg,
   },
   errorText: {
-    fontSize: 14,
-    marginTop: 4,
+    fontSize: FONT_SIZE.md,
+    marginTop: SPACING.xs,
   },
 });

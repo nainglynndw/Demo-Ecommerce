@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from '@app-types/theme';
+import { SPACING, BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT, COLORS } from '@constants';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -13,22 +14,22 @@ export const createStyles = (theme: Theme) =>
     headerContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 12,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     backButton: {
-      marginRight: 16,
+      marginRight: SPACING.lg,
     },
     backButtonText: {
-      fontSize: 16,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.primary,
-      fontWeight: '600',
+      fontWeight: FONT_WEIGHT.semiBold,
     },
     title: {
-      fontSize: 24,
-      fontWeight: 'bold',
+      fontSize: FONT_SIZE.xxxl,
+      fontWeight: FONT_WEIGHT.bold,
       color: theme.colors.text,
     },
     loadingContainer: {
@@ -37,64 +38,64 @@ export const createStyles = (theme: Theme) =>
       alignItems: 'center',
     },
     loadingText: {
-      marginTop: 16,
-      fontSize: 16,
+      marginTop: SPACING.lg,
+      fontSize: FONT_SIZE.lg,
       color: theme.colors.textSecondary,
     },
     errorContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: SPACING.xl,
     },
     retryButton: {
       backgroundColor: theme.colors.primary,
-      paddingHorizontal: 24,
-      paddingVertical: 12,
-      borderRadius: 8,
+      paddingHorizontal: SPACING.xxl,
+      paddingVertical: SPACING.md,
+      borderRadius: BORDER_RADIUS.md,
     },
     retryButtonText: {
-      color: 'white',
-      fontWeight: '600',
-      fontSize: 16,
+      color: COLORS.white,
+      fontWeight: FONT_WEIGHT.semiBold,
+      fontSize: FONT_SIZE.lg,
     },
     form: {
-      paddingHorizontal: 20,
-      paddingBottom: 20,
+      paddingHorizontal: SPACING.xl,
+      paddingBottom: SPACING.xl,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: FONT_SIZE.xl,
+      fontWeight: FONT_WEIGHT.semiBold,
       color: theme.colors.text,
-      marginBottom: 16,
-      marginTop: 8,
+      marginBottom: SPACING.lg,
+      marginTop: SPACING.sm,
     },
     row: {
       flexDirection: 'row',
-      gap: 12,
-      marginBottom: 20,
+      gap: SPACING.md,
+      marginBottom: SPACING.xl,
     },
     halfInput: {
       flex: 1,
     },
     submitButton: {
       backgroundColor: theme.colors.primary,
-      paddingVertical: 16,
-      borderRadius: 12,
+      paddingVertical: SPACING.lg,
+      borderRadius: BORDER_RADIUS.lg,
       alignItems: 'center',
-      marginTop: 20,
+      marginTop: SPACING.xl,
     },
     submitButtonDisabled: {
       backgroundColor: theme.colors.textSecondary,
     },
     submitButtonText: {
-      color: 'white',
-      fontSize: 18,
-      fontWeight: '600',
+      color: COLORS.white,
+      fontSize: FONT_SIZE.xl,
+      fontWeight: FONT_WEIGHT.semiBold,
     },
     errorText: {
       color: theme.colors.error,
-      fontSize: 14,
-      marginTop: 4,
+      fontSize: FONT_SIZE.md,
+      marginTop: SPACING.xs,
     },
   });
