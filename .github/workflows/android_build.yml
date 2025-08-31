@@ -2,9 +2,9 @@ name: Android Build
 
 on:
   push:
-    branches: [dev]
+    branches: [master]
   pull_request:
-    branches: [dev]
+    branches: [master]
 
 jobs:
   build:
@@ -39,6 +39,12 @@ jobs:
 
       - name: Install JS dependencies
         run: yarn install --immutable
+
+      - name: Lint codebase
+        run: yarn lint
+
+      - name: Run tests
+        run: yarn test --ci --coverage
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
