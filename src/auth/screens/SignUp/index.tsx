@@ -22,7 +22,7 @@ interface SignUpScreenProps {
 export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
   ({ navigation }) => {
     const { theme } = useThemeStore();
-    const { updateUserProfile } = useUserStore();
+    const { register } = useUserStore();
     const {
       control,
       handleSubmit,
@@ -41,21 +41,21 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = memo(
     const onSubmit = useCallback(
       async (data: SignupData & { confirmPassword: string }) => {
         try {
-          await updateUserProfile({
+          const signupData: SignupData = {
             email: data.email,
-          });
+            password: data.password,
+          };
 
-          Alert.alert('Success', 'Account created successfully!', [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('OnboardingStep1'),
-            },
-          ]);
+          await register(signupData);
         } catch (error) {
-          Alert.alert('Error', 'Failed to create account. Please try again.');
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Failed to create account. Please try again.';
+          Alert.alert('Error', errorMessage);
         }
       },
-      [navigation, updateUserProfile],
+      [register],
     );
 
     const handleSignInPress = useCallback(() => {

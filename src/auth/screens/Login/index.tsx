@@ -22,7 +22,7 @@ interface LoginScreenProps {
 export const LoginScreen: React.FC<LoginScreenProps> = memo(
   ({ navigation }) => {
     const { theme } = useThemeStore();
-    const { setAuthStatus, updateUserProfile } = useUserStore();
+    const { login } = useUserStore();
     const {
       control,
       handleSubmit,
@@ -36,24 +36,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = memo(
 
     const onSubmit = useCallback(
       async (data: LoginData) => {
-        if (data.email === 'demo@test.com' && data.password === 'password') {
-          try {
-            // Save user email to profile
-            await updateUserProfile({
-              email: data.email,
-            });
-            
-            await setAuthStatus({ isAuthenticated: true });
-            
-            Alert.alert('Success', 'Login successful!');
-          } catch (error) {
-            Alert.alert('Error', 'Login failed. Please try again.');
-          }
-        } else {
-          Alert.alert('Error', 'Invalid credentials');
+        try {
+          await login(data);
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Login failed. Please try again.';
+          Alert.alert('Error', errorMessage);
         }
       },
-      [setAuthStatus, updateUserProfile],
+      [login],
     );
     const handleSignUpPress = useCallback(() => {
       navigation.navigate('SignUp');

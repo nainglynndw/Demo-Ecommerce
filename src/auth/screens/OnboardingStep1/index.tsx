@@ -6,11 +6,11 @@ import { OnboardingStep1Data } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
 import { useUserStore } from '../../../stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../../../navigation/AuthNavigator';
+import { MainStackParamList } from '../../../navigation/MainNavigator';
 import { createStyles } from './styles';
 
 type OnboardingStep1NavigationProp = StackNavigationProp<
-  AuthStackParamList,
+  MainStackParamList,
   'OnboardingStep1'
 >;
 
@@ -22,7 +22,7 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
   navigation,
 }) => {
   const { theme, setThemeMode } = useThemeStore();
-  const { saveStep1Data, setAuthStatus } = useUserStore();
+  const { saveStep1Data } = useUserStore();
   const {
     control,
     handleSubmit,
@@ -42,23 +42,19 @@ export const OnboardingStep1Screen: React.FC<OnboardingStep1Props> = ({
 
   const onSubmit = async (data: OnboardingStep1Data) => {
     try {
-      // Save step 1 data to storage
       await saveStep1Data(data);
 
-      // Navigate to step 2 with step 1 data
-      navigation.navigate('OnboardingStep2', {
-        step1Data: data,
-      });
+      navigation.navigate('OnboardingStep2');
     } catch (error) {
       console.error('Failed to save step 1 data:', error);
     }
   };
 
-  const onSkip = async () => {
-    // Skip step 1 - user will be prompted for missing info during purchase
-    console.log('Skipping step 1 - will prompt during purchase');
-    // Set authenticated status to navigate to main app
-    await setAuthStatus({ isAuthenticated: true });
+  const onSkip = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'ProductList' }],
+    });
   };
 
   const styles = createStyles(theme);

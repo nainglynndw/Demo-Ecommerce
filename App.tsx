@@ -4,19 +4,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClientProvider } from '@tanstack/react-query';
 import 'react-native-gesture-handler';
 import { useThemeStore } from './src/stores/themeStore';
-import { useUserStore } from './src/stores/userStore';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { queryClient } from './src/config/queryClient';
 import { DeveloperUtils } from './src/components/DeveloperUtils';
 
 function App() {
   const { theme } = useThemeStore();
-  const { initializeUserData } = useUserStore();
   const [showDeveloperUtils, setShowDeveloperUtils] = React.useState(false);
-
-  React.useEffect(() => {
-    initializeUserData();
-  }, [initializeUserData]);
 
   return (
     <QueryClientProvider client={queryClient}>

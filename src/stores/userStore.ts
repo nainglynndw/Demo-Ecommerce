@@ -3,13 +3,25 @@ import {
   UserProfile,
   OnboardingStep1Data,
   OnboardingStep2Data,
+  LoginData,
+  SignupData,
 } from '../auth/types';
-import {
-  UserApi,
-  OnboardingStatus,
-  AuthStatus,
-} from '../services/userApi';
+import { UserApi } from '../services/userApi';
 import { useThemeStore } from './themeStore';
+
+interface AuthStatus {
+  isAuthenticated: boolean;
+  userId?: string;
+  email?: string;
+  token?: string;
+  lastLoginTime?: string;
+}
+
+interface OnboardingStatus {
+  step1Completed: boolean;
+  step2Completed: boolean;
+  lastCompletedStep: 'step1' | 'step2' | null;
+}
 
 interface UserStore {
   userProfile: Partial<UserProfile> | null;
@@ -17,25 +29,20 @@ interface UserStore {
   onboardingStatus: OnboardingStatus;
   authStatus: AuthStatus;
 
-  // Computed values
   needsOnboarding: 'step1' | 'step2' | 'none';
 
-  // Actions
+  login: (credentials: LoginData) => Promise<void>;
+  register: (userData: SignupData) => Promise<void>;
+  logout: () => void;
+
   saveStep1Data: (data: OnboardingStep1Data) => Promise<void>;
   saveStep2Data: (data: OnboardingStep2Data) => Promise<void>;
   updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
-  setAuthStatus: (status: AuthStatus) => Promise<void>;
-  logout: () => Promise<void>;
-  initializeUserData: () => Promise<void>;
-
-  // Utility functions
-  hasRequiredInfoForPurchase: () => boolean;
-  getMissingPurchaseInfo: () => string[];
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
   userProfile: null,
-  isLoading: true,
+  isLoading: false,
   onboardingStatus: {
     step1Completed: false,
     step2Completed: false,
@@ -46,176 +53,161 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   get needsOnboarding() {
-    const { onboardingStatus } = get();
-    if (!onboardingStatus.step1Completed) return 'step1';
-    if (!onboardingStatus.step2Completed) return 'step2';
+    const { userProfile } = get();
+    if (!userProfile?.onboardingCompleted?.step1) return 'step1';
+    if (!userProfile?.onboardingCompleted?.step2) return 'step2';
     return 'none';
   },
 
-  saveStep1Data: async (data: OnboardingStep1Data) => {
+  login: async (credentials: LoginData) => {
     try {
-      await UserApi.saveStep1Data(data);
-
-      const { userProfile, onboardingStatus } = get();
-      const updatedProfile = {
-        ...userProfile,
-        name: data.name,
-        phone: data.phone,
-        preferences: data.preferences,
-      };
-
-      const updatedStatus = {
-        ...onboardingStatus,
-        step1Completed: true,
-        lastCompletedStep: 'step1' as const,
-      };
+      set({ isLoading: true });
+      const response = await UserApi.login(credentials);
 
       set({
-        userProfile: updatedProfile,
-        onboardingStatus: updatedStatus,
+        userProfile: response.user,
+        authStatus: {
+          isAuthenticated: true,
+          userId: response.user.id,
+          email: response.user.email,
+          token: response.token,
+          lastLoginTime: new Date().toISOString(),
+        },
+        onboardingStatus: {
+          step1Completed: response.user.onboardingCompleted?.step1 || false,
+          step2Completed: response.user.onboardingCompleted?.step2 || false,
+          lastCompletedStep: response.user.onboardingCompleted?.step2
+            ? 'step2'
+            : response.user.onboardingCompleted?.step1
+            ? 'step1'
+            : null,
+        },
+        isLoading: false,
       });
-    } catch (error) {
-      console.error('Failed to save step 1 data:', error);
-    }
-  },
 
-  saveStep2Data: async (data: OnboardingStep2Data) => {
-    try {
-      await UserApi.saveStep2Data(data);
-
-      const { userProfile, onboardingStatus } = get();
-      const updatedProfile = {
-        ...userProfile,
-        dateOfBirth: data.dateOfBirth,
-        address: data.address,
-      };
-
-      const updatedStatus = {
-        ...onboardingStatus,
-        step2Completed: true,
-        lastCompletedStep: 'step2' as const,
-      };
-
-      set({
-        userProfile: updatedProfile,
-        onboardingStatus: updatedStatus,
-      });
-    } catch (error) {
-      console.error('Failed to save step 2 data:', error);
-    }
-  },
-
-  updateUserProfile: async (profile: Partial<UserProfile>) => {
-    try {
-      await UserApi.updateUserProfile(profile);
-
-      const { userProfile } = get();
-      const updatedProfile = {
-        ...userProfile,
-        ...profile,
-      };
-      
-      set({ userProfile: updatedProfile });
-
-      // Update theme if theme preference changed
-      if (profile.preferences?.theme) {
-        useThemeStore.getState().updateTheme(profile.preferences.theme);
+      if (response.user.preferences?.theme) {
+        useThemeStore.getState().updateTheme(response.user.preferences.theme);
       }
     } catch (error) {
-      console.error('Failed to update user profile:', error);
+      set({ isLoading: false });
+      throw error;
     }
   },
 
-  setAuthStatus: async (status: AuthStatus) => {
+  register: async (userData: SignupData) => {
     try {
-      await UserApi.saveAuthStatus(status);
-      set({ authStatus: status });
-    } catch (error) {
-      console.error('Failed to set auth status:', error);
-    }
-  },
-
-  logout: async () => {
-    try {
-      await UserApi.clearUserData();
+      set({ isLoading: true });
+      const response = await UserApi.register(userData);
 
       set({
-        userProfile: null,
+        userProfile: response.user,
+        authStatus: {
+          isAuthenticated: true,
+          userId: response.user.id,
+          email: response.user.email,
+          token: response.token,
+          lastLoginTime: new Date().toISOString(),
+        },
         onboardingStatus: {
           step1Completed: false,
           step2Completed: false,
           lastCompletedStep: null,
         },
-        authStatus: {
-          isAuthenticated: false,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+
+  saveStep1Data: async (data: OnboardingStep1Data) => {
+    try {
+      const { authStatus } = get();
+      if (!authStatus.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const updatedUser = await UserApi.saveStep1Data(authStatus.userId, data);
+
+      set({
+        userProfile: updatedUser,
+        onboardingStatus: {
+          step1Completed: true,
+          step2Completed: updatedUser.onboardingCompleted?.step2 || false,
+          lastCompletedStep: 'step1' as const,
         },
       });
 
-      // Reset theme to system default when user logs out
-      useThemeStore.getState().updateTheme('system');
+      if (data.preferences?.theme) {
+        useThemeStore.getState().updateTheme(data.preferences.theme);
+      }
     } catch (error) {
-      console.error('Failed to logout:', error);
+      console.error('Failed to save step 1 data:', error);
+      throw error;
     }
   },
 
-  initializeUserData: async () => {
+  saveStep2Data: async (data: OnboardingStep2Data) => {
     try {
-      set({ isLoading: true });
+      const { authStatus } = get();
+      if (!authStatus.userId) {
+        throw new Error('User not authenticated');
+      }
 
-      const profile = await UserApi.getUserProfile();
-      const onboarding = await UserApi.getOnboardingStatus();
-      const auth = await UserApi.getAuthStatus();
+      const updatedUser = await UserApi.saveStep2Data(authStatus.userId, data);
 
       set({
-        userProfile: profile,
-        onboardingStatus: onboarding,
-        authStatus: auth,
-        isLoading: false,
+        userProfile: updatedUser,
+        onboardingStatus: {
+          step1Completed: updatedUser.onboardingCompleted?.step1 || true,
+          step2Completed: true,
+          lastCompletedStep: 'step2' as const,
+        },
       });
+    } catch (error) {
+      console.error('Failed to save step 2 data:', error);
+      throw error;
+    }
+  },
 
-      // Initialize theme from user profile
-      if (profile?.preferences?.theme) {
+  updateUserProfile: async (profile: Partial<UserProfile>) => {
+    try {
+      const { authStatus } = get();
+      if (!authStatus.userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const updatedUser = await UserApi.updateUserInfo(
+        authStatus.userId,
+        profile,
+      );
+
+      set({ userProfile: updatedUser });
+
+      if (profile.preferences?.theme) {
         useThemeStore.getState().updateTheme(profile.preferences.theme);
       }
     } catch (error) {
-      console.error('Failed to load user data:', error);
-      set({ isLoading: false });
+      console.error('Failed to update user profile:', error);
+      throw error;
     }
   },
 
-  hasRequiredInfoForPurchase: () => {
-    const { userProfile } = get();
-    if (!userProfile) return false;
-    return !!(
-      userProfile.name &&
-      userProfile.phone &&
-      userProfile.address?.street &&
-      userProfile.address?.city &&
-      userProfile.address?.state &&
-      userProfile.address?.zipCode
-    );
-  },
+  logout: () => {
+    set({
+      userProfile: null,
+      onboardingStatus: {
+        step1Completed: false,
+        step2Completed: false,
+        lastCompletedStep: null,
+      },
+      authStatus: {
+        isAuthenticated: false,
+      },
+      isLoading: false,
+    });
 
-  getMissingPurchaseInfo: () => {
-    const { userProfile } = get();
-    const missing: string[] = [];
-
-    if (!userProfile) {
-      return ['name', 'phone', 'address'];
-    }
-
-    if (!userProfile.name) missing.push('name');
-    if (!userProfile.phone) missing.push('phone');
-
-    if (!userProfile.address) {
-      missing.push('address');
-    } else {
-      if (!userProfile.address.street) missing.push('street address');
-      if (!userProfile.address.city) missing.push('city');
-      if (!userProfile.address.state) missing.push('state');
-      if (!userProfile.address.zipCode) missing.push('zip code');
-    }
-
-    return missing;
+    useThemeStore.getState().updateTheme('system');
   },
 }));

@@ -6,32 +6,23 @@ import { OnboardingStep2Data } from '../../types';
 import { useThemeStore } from '../../../stores/themeStore';
 import { useUserStore } from '../../../stores/userStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { AuthStackParamList } from '../../../navigation/AuthNavigator';
+import { MainStackParamList } from '../../../navigation/MainNavigator';
 import { createStyles } from './styles';
 
 type OnboardingStep2NavigationProp = StackNavigationProp<
-  AuthStackParamList,
-  'OnboardingStep2'
->;
-
-type OnboardingStep2RouteProp = RouteProp<
-  AuthStackParamList,
+  MainStackParamList,
   'OnboardingStep2'
 >;
 
 interface OnboardingStep2Props {
   navigation: OnboardingStep2NavigationProp;
-  route: OnboardingStep2RouteProp;
 }
 
 export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
   navigation,
-  route,
 }) => {
   const { theme } = useThemeStore();
-  const { saveStep2Data, setAuthStatus } = useUserStore();
-  const { step1Data } = route.params;
+  const { saveStep2Data } = useUserStore();
 
   const {
     control,
@@ -52,45 +43,28 @@ export const OnboardingStep2Screen: React.FC<OnboardingStep2Props> = ({
 
   const onSubmit = async (step2Data: OnboardingStep2Data) => {
     try {
-      // Save step 2 data to storage (step 1 was already saved)
       await saveStep2Data(step2Data);
-
-      // Combine both steps data for logging
-      const completeOnboardingData = {
-        ...step1Data,
-        ...step2Data,
-      };
-      console.log('Complete onboarding data:', completeOnboardingData);
-
-      Alert.alert('Welcome!', 'Your profile has been set up successfully!', [
-        {
-          text: 'Get Started',
-          onPress: async () => {
-            // Set authenticated status to navigate to main app
-            await setAuthStatus({ isAuthenticated: true });
-          },
-        },
-      ]);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ProductList' }],
+      });
     } catch (error) {
       console.error('Failed to save step 2 data:', error);
     }
   };
 
   const onSkip = () => {
-    // Step 1 data is already saved, just skip address for now
-    // User will be prompted for address during first purchase
-    console.log('Skipping address - step 1 data already saved');
-    console.log('Step 1 data:', step1Data);
-
     Alert.alert(
       'Profile Saved',
       'You can add your address later when making your first purchase.',
       [
         {
           text: 'Continue',
-          onPress: async () => {
-            // Set authenticated status to navigate to main app
-            await setAuthStatus({ isAuthenticated: true });
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'ProductList' }],
+            });
           },
         },
       ],
