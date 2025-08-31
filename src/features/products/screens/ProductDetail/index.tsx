@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
@@ -16,6 +15,18 @@ import { useThemeStore } from '@stores/themeStore';
 import { useUserStore } from '@stores/userStore';
 import { createStyles } from './styles';
 import { formatPrice, formatRating, formatDate } from '@utils/formatting';
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  SlideInLeft,
+  SlideInRight,
+  ZoomIn,
+  BounceInDown,
+  ReduceMotion,
+} from 'react-native-reanimated';
+
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
 
 type ProductDetailNavigationProp = StackNavigationProp<any, 'ProductDetail'>;
 type ProductDetailRouteProp = RouteProp<
@@ -107,124 +118,258 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.imageContainer}>
-          <Image
+        <Animated.View
+          style={styles.imageContainer}
+          entering={FadeInUp.duration(800)
+            .delay(200)
+            .randomDelay()
+            .reduceMotion(ReduceMotion.Never)
+            .withInitialValues({
+              opacity: 0,
+              transform: [{ translateY: -100 }],
+            })}
+        >
+          <Animated.Image
             source={{ uri: product.images[0] }}
             style={styles.mainImage}
             resizeMode="cover"
+            entering={ZoomIn.duration(1000)
+              .delay(400)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ scale: 0.8 }] })}
           />
-          <TouchableOpacity
+          <AnimatedTouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
+            entering={SlideInLeft.duration(600)
+              .delay(600)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateX: -100 }] })}
           >
             <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
+          </AnimatedTouchableOpacity>
           {product.images.length > 1 && (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.thumbnailContainer}
-              contentContainerStyle={styles.thumbnailContent}
+            <Animated.View
+              entering={SlideInRight.duration(700)
+                .delay(800)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: 200 }] })}
             >
-              {product.images.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: image }}
-                  style={styles.thumbnail}
-                  resizeMode="cover"
-                />
-              ))}
-            </ScrollView>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.thumbnailContainer}
+                contentContainerStyle={styles.thumbnailContent}
+              >
+                {product.images.map((image, index) => (
+                  <Animated.Image
+                    key={index}
+                    source={{ uri: image }}
+                    style={styles.thumbnail}
+                    resizeMode="cover"
+                    entering={FadeInUp.duration(500)
+                      .delay(1000 + index * 100)
+                      .randomDelay()
+                      .reduceMotion(ReduceMotion.Never)}
+                  />
+                ))}
+              </ScrollView>
+            </Animated.View>
           )}
-        </View>
+        </Animated.View>
 
-        <View style={styles.content}>
-          <View style={styles.contentHeader}>
+        <Animated.View
+          style={styles.content}
+          entering={FadeInUp.duration(800)
+            .delay(1000)
+            .randomDelay()
+            .reduceMotion(ReduceMotion.Never)
+            .withInitialValues({ opacity: 0, transform: [{ translateY: 50 }] })}
+        >
+          <Animated.View
+            style={styles.contentHeader}
+            entering={SlideInLeft.duration(700)
+              .delay(1200)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateX: -150 }] })}
+          >
             <View style={styles.titleContainer}>
               <Text style={styles.name}>{product.name}</Text>
               <Text style={styles.category}>{product.category}</Text>
             </View>
-            <Text style={styles.price}>{formatPrice(product.price)}</Text>
-          </View>
+            <Animated.View
+              entering={ZoomIn.duration(600)
+                .delay(1400)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ scale: 0.5 }] })}
+            >
+              <Text style={styles.price}>{formatPrice(product.price)}</Text>
+            </Animated.View>
+          </Animated.View>
 
-          <View style={styles.ratingContainer}>
+          <Animated.View
+            style={styles.ratingContainer}
+            entering={SlideInRight.duration(700)
+              .delay(1600)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateX: 150 }] })}
+          >
             <Text style={styles.rating}>
               {formatRating(product.rating, product.reviews)}
             </Text>
             <Text style={styles.stock}>
               {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
             </Text>
-          </View>
+          </Animated.View>
 
-          <View style={styles.section}>
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.duration(700)
+              .delay(1800)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({
+                opacity: 0,
+                transform: [{ translateY: 30 }],
+              })}
+          >
             <Text style={styles.sectionTitle}>Description</Text>
             <Text style={styles.description}>{product.description}</Text>
-          </View>
+          </Animated.View>
 
-          <View style={styles.section}>
+          <Animated.View
+            style={styles.section}
+            entering={FadeInDown.duration(700)
+              .delay(2000)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({
+                opacity: 0,
+                transform: [{ translateY: 30 }],
+              })}
+          >
             <Text style={styles.sectionTitle}>Product Details</Text>
-            <View style={styles.detailRow}>
+            <Animated.View
+              style={styles.detailRow}
+              entering={SlideInLeft.duration(500)
+                .delay(2200)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: -80 }] })}
+            >
               <Text style={styles.detailLabel}>Created by:</Text>
               <Text style={styles.detailValue}>{product.createdBy}</Text>
-            </View>
-            <View style={styles.detailRow}>
+            </Animated.View>
+            <Animated.View
+              style={styles.detailRow}
+              entering={SlideInRight.duration(500)
+                .delay(2300)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: 80 }] })}
+            >
               <Text style={styles.detailLabel}>Created on:</Text>
               <Text style={styles.detailValue}>
                 {formatDate(product.createdAt)}
               </Text>
-            </View>
-            <View style={styles.detailRow}>
+            </Animated.View>
+            <Animated.View
+              style={styles.detailRow}
+              entering={SlideInLeft.duration(500)
+                .delay(2400)
+                .randomDelay()
+                .reduceMotion(ReduceMotion.Never)
+                .withInitialValues({ transform: [{ translateX: -80 }] })}
+            >
               <Text style={styles.detailLabel}>Last updated:</Text>
               <Text style={styles.detailValue}>
                 {formatDate(product.updatedAt)}
               </Text>
-            </View>
-          </View>
+            </Animated.View>
+          </Animated.View>
 
-          <View style={styles.actionButtons}>
+          <Animated.View
+            style={styles.actionButtons}
+            entering={BounceInDown.duration(800)
+              .delay(2600)
+              .randomDelay()
+              .reduceMotion(ReduceMotion.Never)
+              .withInitialValues({ transform: [{ translateY: 100 }] })}
+          >
             {isProductOwner() ? (
               // Product Owner Actions
-              <View style={styles.productActions}>
-                <TouchableOpacity
+              <Animated.View
+                style={styles.productActions}
+                entering={FadeInUp.duration(600)
+                  .delay(2800)
+                  .randomDelay()
+                  .reduceMotion(ReduceMotion.Never)
+                  .withInitialValues({
+                    opacity: 0,
+                    transform: [{ translateY: 40 }],
+                  })}
+              >
+                <AnimatedTouchableOpacity
                   style={styles.editButton}
                   onPress={handleEdit}
+                  entering={SlideInLeft.duration(500)
+                    .delay(3000)
+                    .randomDelay()
+                    .reduceMotion(ReduceMotion.Never)
+                    .withInitialValues({ transform: [{ translateX: -120 }] })}
                 >
                   <Text style={styles.editButtonText}>Edit Product</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                </AnimatedTouchableOpacity>
+                <AnimatedTouchableOpacity
                   style={styles.deleteButton}
                   onPress={handleDelete}
                   disabled={deleteProductMutation.isPending}
+                  entering={SlideInRight.duration(500)
+                    .delay(3100)
+                    .randomDelay()
+                    .reduceMotion(ReduceMotion.Never)
+                    .withInitialValues({ transform: [{ translateX: 120 }] })}
                 >
                   <Text style={styles.deleteButtonText}>
                     {deleteProductMutation.isPending
                       ? 'Deleting...'
                       : 'Delete Product'}
                   </Text>
-                </TouchableOpacity>
-              </View>
+                </AnimatedTouchableOpacity>
+              </Animated.View>
             ) : (
               // Non-Owner Actions
-              <TouchableOpacity
+              <AnimatedTouchableOpacity
                 style={[
                   styles.orderButton,
                   product.stock === 0 && styles.orderButtonDisabled,
                 ]}
                 onPress={handleOrder}
                 disabled={product.stock === 0}
+                entering={ZoomIn.duration(700)
+                  .delay(2800)
+                  .randomDelay()
+                  .reduceMotion(ReduceMotion.Never)
+                  .withInitialValues({ transform: [{ scale: 0.6 }] })}
               >
                 <Text style={styles.orderButtonText}>
                   {product.stock > 0 ? 'Order Now' : 'Out of Stock'}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedTouchableOpacity>
             )}
-          </View>
-        </View>
-      </ScrollView>
+          </Animated.View>
+        </Animated.View>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 };
