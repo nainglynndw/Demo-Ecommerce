@@ -1,8 +1,9 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LoginScreen } from '../auth/screens/Login';
-import { SignUpScreen } from '../auth/screens/SignUp';
+
 import { useThemeStore } from '../stores/themeStore';
+import { LoginScreen } from '../features/auth/screens/Login';
+import { SignUpScreen } from '../features/auth/screens/SignUp';
 
 export type AuthStackParamList = {
   Login: undefined;

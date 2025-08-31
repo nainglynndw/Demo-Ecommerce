@@ -7,7 +7,7 @@ import {
   OnboardingStep2Data,
   LoginData,
   SignupData,
-} from '../auth/types';
+} from '../features/auth/types';
 import { UserApi } from '../services/userApi';
 import { useThemeStore } from './themeStore';
 interface UserStore {

@@ -1,15 +1,16 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ProductListScreen } from '../products/screens/ProductList';
-import { ProductDetailScreen } from '../products/screens/ProductDetail';
-import { CreateProductScreen } from '../products/screens/CreateProduct';
-import { CreateOrderScreen } from '../orders/screens/CreateOrder';
-import { Profile } from '../profile/screens/Profile';
-import { EditProfileScreen } from '../profile/screens/EditProfile';
-import { OnboardingStep1Screen } from '../auth/screens/OnboardingStep1';
-import { OnboardingStep2Screen } from '../auth/screens/OnboardingStep2';
+import { ProductListScreen } from '../features/products/screens/ProductList';
+import { ProductDetailScreen } from '../features/products/screens/ProductDetail';
+import { CreateProductScreen } from '../features/products/screens/CreateProduct';
+import { Profile } from '../features/profile/screens/Profile';
+import { EditProfileScreen } from '../features/profile/screens/EditProfile';
+
 import { useThemeStore } from '../stores/themeStore';
 import { useUserStore } from '../stores/userStore';
+import { OnboardingStep1Screen } from '../features/auth/screens/OnboardingStep1';
+import { OnboardingStep2Screen } from '../features/auth/screens/OnboardingStep2';
+import { CreateOrderScreen } from '../features/orders/screens/CreateOrder';
 
 export type MainStackParamList = {
   OnboardingStep1: undefined;

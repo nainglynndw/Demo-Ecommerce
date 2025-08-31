@@ -4,7 +4,7 @@ import {
   OnboardingStep2Data,
   LoginData,
   SignupData,
-} from '../auth/types';
+} from '../features/auth/types';
 import { ApiErrorHandler } from './apiErrorHandler';
 import {
   validateCredentials,
